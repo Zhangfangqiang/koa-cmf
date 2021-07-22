@@ -1,0 +1,32 @@
+{{extend 'admin/layout/index.html'}}
+
+{{block 'content'}}
+<div class="layui-card zf-parent-body-white" style="margin-bottom: 0px;">
+  <div class="layui-card-body">
+    <form class="layui-form">
+      <div class="layui-form-item">
+        <label class="layui-form-label">名称：</label>
+        <div class="layui-input-block">
+          <input type="text" name="nick_name" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">邮箱：</label>
+        <div class="layui-input-block">
+          <input type="email" name="email" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">密码：</label>
+        <div class="layui-input-block">
+          <input type="text" name="password" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <input type="button" hidden id="user-store-submit" lay-filter="user-store-submit" lay-submit value="确认">
+    </form>
+  </div>
+</div>
+{{/block}}
+
+{{block 'after-js'}}
+{{/block}}

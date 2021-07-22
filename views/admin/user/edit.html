@@ -1,0 +1,52 @@
+{{extend 'admin/layout/index.html'}}
+
+{{block 'content'}}
+<div class="layui-card zf-parent-body-white" style="margin-bottom: 0px;">
+  <div class="layui-card-body">
+    <form class="layui-form" lay-filter="user-update-form">
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">头像：</label>
+        <div class="layui-input-block">
+          <img class="form-file-img" id="avatar_url_img" src="" alt="">
+          <button data-id="avatar_url" type="button" class="zf-upload-img layui-btn layui-btn-xs">选择图片</button>
+          <input type="text" id="avatar_url" name="avatar_url" value="" hidden>
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">名称：</label>
+        <div class="layui-input-block">
+          <input type="text" name="nick_name" lay-verify="required" placeholder="" value="" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">邮箱：</label>
+        <div class="layui-input-block">
+          <input type="email" name="email" lay-verify="required" placeholder="" value="" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">密码：</label>
+        <div class="layui-input-block">
+          <input type="text" name="password"  placeholder="******" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <input type="button" hidden id="user-update-submit" lay-filter="user-update-submit" lay-submit value="确认">
+    </form>
+  </div>
+</div>
+{{/block}}
+
+{{block 'after-js'}}
+<script>
+  $.ajax({
+    url     : '{{updateUrl}}?fields=nick_name,email,avatar_url',
+    type    : 'GET',
+    dataType: 'json',
+    success : function (res) {
+      form.val("user-update-form", res.data);
+    }
+  })
+</script>
+{{/block}}

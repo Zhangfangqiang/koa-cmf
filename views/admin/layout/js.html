@@ -1,0 +1,277 @@
+<script src="/public/layuiadmin/layui/layui.js"></script>
+<script>
+  layui.config({
+    base: '/public/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use('index');
+
+
+  var $       = layui.$;
+  var setter  = layui.setter;
+  var admin   = layui.admin;
+  var form    = layui.form;
+  var router  = layui.router();
+  var search  = router.search;
+  var table   = layui.table;
+  var laydate = layui.laydate;
+  var upload  = layui.upload;
+
+
+  /**
+   * 提示加跳转
+   */
+  function msgAndJump(res) {
+    if (res.code == 0) {
+      //弹出正确消息
+      layer.msg(res.msg, {time: 5000, icon: 6})
+      //倒计时
+      setInterval(function () {
+        if (res.url) {
+          window.location.href = res.url
+        } else {
+          location.reload()
+        }
+      }, 1000)
+
+    } else {
+      //弹出错误消息
+      layer.msg(res.msg, {time: 5000, icon: 2})
+    }
+  }
+
+  /**
+   * 表单弹出表单
+   */
+  function zfPopupForm(pageUrl, postUrl, submitID, tableName, title, height = '330px', width = '500px', type = 'POST') {
+    layer.open({
+      title   : title,
+      type    : 2,
+      area    : [width, height],
+      content : window.location.origin + pageUrl,
+      btn     : ['确定', '取消'],
+      yes     : function (index, layero) {
+        var iframeWindow = window['layui-layer-iframe' + index];                    //或如iframe
+        var submit       = layero.find('iframe').contents().find('#' + submitID);
+
+        //监听提交
+        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+          var field = data.field;     //获取提交的字段
+          //提交 Ajax 成功后，静态更新表格中的数据
+          $.ajax({
+            url     : postUrl,
+            type    : type,
+            dataType: 'json',
+            data    : field,
+            success: function (res) {
+              layer.msg(res.msg);
+              if(res.code == 0){
+                table.reload(tableName);  //刷新表
+                layer.close(index);   //关闭一个弹框
+              }
+            }
+          })
+
+        });
+        submit.trigger('click');
+      }
+    });
+  }
+
+  /**
+   * 删除
+   */
+  function zfDestroy(url,data, obj) {
+    layer.confirm('确定删除这条数据？', function (index) {
+      $.ajax({
+        url     : window.location.origin + url,
+        dataType: "json",
+        type    : 'DELETE',
+        data    : data,
+        async   : true, //异步
+        success : function (res) {
+          layer.msg(res.msg);
+        }
+      });
+      layer.close(index);         //关闭弹框
+      obj.del();                  //删除对应行（tr）的DOM结构，并更新缓存
+    });
+  }
+
+  /**
+   * 删除空属性
+   */
+  function removeNullProperty(obj) {
+    Object.keys(obj).forEach(item => {
+      if (!obj[item]) delete obj[item]
+    })
+    return obj;
+  }
+
+  /**
+   * 查询参数转换
+   */
+  function queryConversion() {
+    query = {}
+    $('.layui-form-item input[name] , .layui-form-item select[name]').each(function (index, item) {
+      var val       = $(this).val();
+      var inputName = $(this).attr('name');
+      var where     = $(this).data('where');
+
+      if ('' != val && '' != inputName) {
+        query[inputName] = `{"${where}":"${val}"}`
+      }
+    });
+    return query;
+  }
+
+  /**
+   * 定义一个函数，用于解析当前 Url 里的参数，
+   * 并以 Key-Value 对象形式返回
+   * @returns {}
+   */
+  function parseSearch() {
+    //初始化一个空对象
+    var searches = {};
+
+    /**
+     * location.search 会返回 Url 中 ? 以及后面的查询参数
+     * substr(1) 将 ? 去除，然后以符号 & 分割成数组，然后遍历这个数组
+     */
+    if (location.search != '') {
+      location.search.substr(1).split('&').forEach(function (str) {
+        var result = str.split('=');
+        searches[decodeURIComponent(result[0])] = decodeURIComponent(result[1]);
+      });
+    }
+    return searches;
+  }
+
+  /**
+   * 根据 Key-Value 对象构建查询参数
+   * @param searches
+   * @returns {string}
+   */
+  function buildSearch(searches) {
+    var query = '?';
+    for (k in searches) {
+      query += encodeURIComponent(k) + '=' + encodeURIComponent(searches[k]) + '&';
+    }
+    return query.substr(0, query.length - 1);
+  }
+
+  /**
+   * 将新的参数 追加 到url中
+   * @param name
+   * @param value
+   */
+  function appendFilterToQuery(name, value) {
+    var searches = parseSearch();
+
+    //如果已经有了字段
+    if (searches[name]) {
+      if (searches[name].indexOf(value) == -1) {
+        searches[name] += ',' + value;
+      }
+      if (value == '') {
+        searches[name] =  value;
+      }
+    } else {
+      searches[name] =  value;
+    }
+
+    location.search = buildSearch(searches);
+  }
+
+  /**
+   * 将新的参数 添加 到url中
+   * @param name
+   * @param value
+   */
+  function sortAddToQuery(name, value) {
+    var searches = parseSearch();
+    searches[name] = value;
+    location.search = buildSearch(searches);
+  }
+
+  /**
+   * 变成白色
+   */
+  if ($('.zf-parent-body-white').length) {
+    $('.zf-parent-body-white').parent('body').css('background', '#ffffff')
+  }
+
+  /**
+   * 刷新页面
+   */
+  if ($('.refresh').length) {
+    $('.refresh').click(function (){
+      window.location.reload();
+    })
+  }
+
+  /**
+   *  自定义提交表单方法
+   */
+  form.on('submit(ajax-post)', function (data) {
+    action = $(data.elem).parents('form').attr('action')           //获取表单上的action提交地址
+    $.ajax({
+      url     : action,
+      dataType: "json",
+      type    : 'POST',
+      data    : data.field,
+      async   : true, //异步
+      success : function (res) {
+        msgAndJump(res)
+      }
+    });
+    return false;
+  })
+
+  /**
+   * 页面弹出层
+   */
+  $('.zf-popup').click(function () {
+    url    = $(this).data('href')
+    title  = $(this).data('title')  || ''
+    width  = $(this).data('width')  || '500px'
+    height = $(this).data('height') || '400px'
+
+    layer.open({
+      title  :title,
+      type   : 2,
+      area   : [width, height],
+      content: window.location.origin+url,
+      cancel : function(index, layero){
+        location.reload()
+      }
+    });
+  })
+
+  /**
+   * 单图上传
+   */
+  upload.render({
+    elem   : '.zf-upload-img',                    //绑定元素
+    url    : '/api/upload/index' ,                //上传接口
+    number : '1',                                 //上传数量
+    size   : '10240',                             //文件大小
+    field  : 'file',                              //字段名称
+    exts   : 'jpg|jpeg|png',                      //允许格式
+    done: function (res, index, upload) {
+      if (res.code == 0) {
+        id       = $(this.item).data('id');
+        console.log(res.data)
+        $('#' + id).val(res.data)                    //设置input值
+        $('#' + id + '_img').attr('src', res.data)   //设置更新头像路径
+      }else{
+        layer.msg(res.msg, {time: 5000, icon: 2})
+      }
+    },
+    error: function () {
+      layer.msg('出了点错请稍后再试', {time: 5000, icon: 2})
+    }
+  });
+
+
+</script>

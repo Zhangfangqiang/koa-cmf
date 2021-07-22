@@ -1,0 +1,40 @@
+{
+  "name": "koa-cmf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/router": "^10.0.0",
+    "art-template": "^4.13.2",
+    "assert": "^2.0.0",
+    "casual": "^1.6.2",
+    "fs": "0.0.1-security",
+    "html-minifier": "^4.0.0",
+    "koa": "^2.13.1",
+    "koa-art-template": "^1.1.1",
+    "koa-body": "^4.2.0",
+    "koa-file-uploader": "^1.0.3",
+    "koa-logger": "^3.2.1",
+    "koa-multer": "^1.0.2",
+    "koa-session": "^6.2.0",
+    "koa-session-local": "^1.0.4",
+    "koa-static-server": "^1.5.2",
+    "md5": "^2.3.0",
+    "md5-file": "^5.0.0",
+    "moment": "^2.29.1",
+    "mysql2": "^2.2.5",
+    "open": "^8.2.1",
+    "os": "^0.1.2",
+    "qs": "^6.10.1",
+    "sequelize": "^6.6.5",
+    "shelljs": "^0.8.4",
+    "url": "^0.11.0",
+    "validator": "^13.6.0"
+  }
+}
