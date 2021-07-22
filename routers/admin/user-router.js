@@ -43,13 +43,6 @@ router.get('/login', async (ctx, next) => {
 })
 
 /**
- * 用户登陆方法
- */
-router.post('/login', async (ctx, next) => {
-
-})
-
-/**
  * 用户数据列表页
  */
 router.get('/index', async (ctx, next) => {
@@ -69,18 +62,6 @@ router.get('/create', async (ctx, next) => {
 router.get('/:id/edit', async (ctx, next) => {
   let {id} = ctx.params
   await ctx.render('admin/user/edit', {updateUrl: `/api/user/${id}`})
-})
-
-/**
- * 修改用户
- */
-router.put('/:id', async (ctx, next) => {
-})
-
-/**
- * 删除用户
- */
-router.delete('/:id', async (ctx, next) => {
 })
 
 module.exports = router

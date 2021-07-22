@@ -273,5 +273,29 @@
     }
   });
 
+  /**
+   * 自定义提交表单方法
+   */
+  form.on('submit(zf-form-submit)', function(data){
+    action = $(data.elem).parents('form').attr('action')             //获取表单上的action提交地址
+    $.ajax({
+      url      : action,
+      dataType : "json",
+      type     : 'POST',
+      data     : data.field,
+      async    : true, //异步
+      success  : function (res) {
+        if (res.code == 1) {
+          layer.msg(res.msg, {time: 5000, icon: 6})
+          setInterval(function () {
+            location.reload()
+          }, 1000)
+        } else {
+          layer.msg(res.msg, {time: 5000, icon: 2})
+        }
+      }
+    });
+    return false;
+  })
 
 </script>

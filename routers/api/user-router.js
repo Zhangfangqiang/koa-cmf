@@ -68,4 +68,19 @@ router.delete('/destroy', async (ctx, next) => {
   })
 })
 
+/**
+ * 用户登陆方法
+ */
+router.post('/login', async (ctx, next) => {
+  let {username, password, vercode} = ctx.request.body
+
+ //UserModel.findOne({where:{
+ //    password
+ //  }})
+
+
+  console.log(username , password,vercode)
+
+})
+
 module.exports = router
