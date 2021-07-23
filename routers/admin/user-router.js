@@ -1,9 +1,11 @@
-const Router    = require("@koa/router")                          //路由
-const router    = new Router({prefix: '/admin/user'})             //实例化定义前戳
-const UserModel = require('../../models/user-model')              //用户模型
-const casual    = require('casual');                              //假数据生成
-const md5       = require('md5')                                  //md5
-const common    = require('../../lib/common')                     //引入常用函数
+const Router          = require("@koa/router")                          //路由
+const router          = new Router({prefix: '/admin/user'})             //实例化定义前戳
+const UserModel       = require('../../models/user-model')              //用户模型
+const casual          = require('casual');                              //假数据生成
+const md5             = require('md5')                                  //md5
+const common          = require('../../lib/common')                     //引入常用函数
+const adminMiddleware = require('./middleware');adminMiddleware(router)
+
 
 /**
  * 生成用户测试数据

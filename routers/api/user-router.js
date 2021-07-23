@@ -1,7 +1,11 @@
-const Router    = require("@koa/router")                          //路由
-const router    = new Router({prefix: '/api/user'})               //实例化定义前戳
-const UserModel = require('../../models/user-model')              //用户模型
-const common    = require('../../lib/common')                     //常用
+const Router        = require("@koa/router")                          //路由
+const router        = new Router({prefix: '/api/user'})               //实例化定义前戳
+const UserModel     = require('../../models/user-model')              //用户模型
+const common        = require('../../lib/common')                     //常用
+const { Op }        = require("sequelize");                           //where 条件
+const apiMiddleware = require('./middleware');apiMiddleware(router)
+const jsonwebtoken  = require('jsonwebtoken')                        //签发验证工具
+const appConfig     = require('../../config/app')
 
 /**
  * 返回数据列表
@@ -20,7 +24,6 @@ router.get('/index', async (ctx, next) => {
  */
 router.post('/create', async (ctx, next) => {
   let {nick_name, email, password} = ctx.request.body
-      password   = common.createPassword(password)
   let avatar_url = 'https://www.zfajax.com/wp-content/uploads/2021/07/srchttp___pic4.zhimg_.com_50_v2-791b5947478755503749ff6675a52366_hd.jpgreferhttp___pic4.zhimg_.jpg'
 
   await UserModel.create({nick_name, email, password, avatar_url}).then((s) => {
@@ -49,7 +52,7 @@ router.get('/:id', async (ctx, next) => {
 router.put('/:id', async (ctx, next) => {
   let {id}       = ctx.params
   let {password} = ctx.request.body
-      password   = common.createPassword(password)
+
   await UserModel.update({...ctx.request.body, password}, {where: {id: id}}).then(()=>{
     ctx.body = {code: 0, msg: '修改成功'}
   }).catch((e) => {
@@ -73,14 +76,27 @@ router.delete('/destroy', async (ctx, next) => {
  */
 router.post('/login', async (ctx, next) => {
   let {username, password, vercode} = ctx.request.body
+      password                      = common.createPassword(password)
 
- //UserModel.findOne({where:{
- //    password
- //  }})
+  //let token = ctx.request.header.authorization
 
+  let user = await UserModel.findOne({where: {
+      [Op.or]: [
+        {password: password, phone: username},
+        {password: password, email: username},
+        {password: password, login_name: username},
+      ]}})
 
-  console.log(username , password,vercode)
+  if (!user) {
+    ctx.body = {code: 400, msg: '用户不存在'}
+    return
+  }
 
+  await user.update({'last_login_at': Date()})
+
+  let token        = jsonwebtoken.sign(JSON.parse(JSON.stringify(user)), appConfig.jwtSecret, {expiresIn: '3d'})
+  ctx.session.user = user
+  ctx.body         = {code: 0, msg: '登陆成功', data: {token}}
 })
 
 module.exports = router

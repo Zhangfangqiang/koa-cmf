@@ -1,6 +1,8 @@
-const db = require("./db-mysql")
-const options = require('../config/model')
+const db        = require("./db-mysql")
+const options   = require('../config/model')
 const DataTypes = require('sequelize')
+const moment    = require('moment')
+const common    = require('../lib/common')                     //常用
 
 /**
  * 定义模型并且抛出,这里的模型不光可以当模型
@@ -28,13 +30,11 @@ module.exports = db.define('user',
       comment: '1封号禁用 , 2正常 , 3未验证如邮箱验证手机号验证'
     },
     open_id: {
-      type: DataTypes.STRING(32),
-      unique: true,
+      type: DataTypes.STRING(80),
       comment: '微信open_ID'
     },
     login_name: {
       type: DataTypes.STRING(50),
-      unique: true,
       comment: '用户昵称',
     },
     nick_name: {
@@ -43,7 +43,6 @@ module.exports = db.define('user',
     },
     email: {
       type: DataTypes.STRING(100),
-      unique: true,
       comment: '用户邮箱',
       validate: {
         isEmail: {msg: "邮箱验证错误"},
@@ -51,13 +50,15 @@ module.exports = db.define('user',
     },
     phone: {
       type: DataTypes.STRING(30),
-      unique: true,
       comment: '用户手机号'
     },
     password: {
       type: DataTypes.STRING(32),
       allowNull: false,
-      comment: '用户密码'
+      comment: '用户密码',
+      set(value){
+        this.setDataValue('password', common.createPassword(value))
+      }
     },
     avatar_url: {
       type: DataTypes.STRING,
@@ -86,6 +87,14 @@ module.exports = db.define('user',
     },
     last_login_at: {
       type: DataTypes.DATE,
-      comment: '最后登陆时间'
+      comment: '最后登陆时间',
+      get() {
+        return moment(this.getDataValue('last_login_at')).tz("Asia/Shanghai").format('YYYY-MM-DD HH:mm:ss')
+      }
     }
-  }, options)
+  },   {
+    ...options,
+    indexes: [
+      {unique: true, fields: ['phone', 'email', 'login_name', 'open_id']}
+    ]
+  })
