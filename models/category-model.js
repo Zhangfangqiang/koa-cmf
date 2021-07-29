@@ -1,6 +1,6 @@
-const db        = require("./db-mysql")
-const options   = require('../config/model')
-const DataTypes = require('sequelize')
+const db                   = require("./db-mysql")
+const options              = require('../config/model')
+const DataTypes            = require('sequelize')
 
 /**
  * 定义模型并且抛出,这里的模型不光可以当模型
@@ -8,7 +8,7 @@ const DataTypes = require('sequelize')
  * @type {ModelCtor<Model>}
  */
 
-module.exports = db.define('category',
+var CategoryModel = db.define('category',
   /*模型配置*/
   {
     id: {
@@ -19,7 +19,16 @@ module.exports = db.define('category',
     },
     parent_id: {
       type: DataTypes.BIGINT.UNSIGNED,
-      comment: "父id",
+      comment: "父id"
+    },
+    path: {
+      type: DataTypes.STRING,
+      comment: '无线分类层级路径',
+    },
+    level:{
+      type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue:0,
+      comment: '层级'
     },
     content_count: {
       type: DataTypes.BIGINT.UNSIGNED,
@@ -27,11 +36,14 @@ module.exports = db.define('category',
     },
     status: {
       type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: 1,
+      allowNull: false,
       comment: '1未发布 , 2发布'
     },
     list_order: {
       type: DataTypes.BIGINT.UNSIGNED,
-      default: '10000',
+      defaultValue: '10000',
+      allowNull: false,
       comment: '排序'
     },
     name: {
@@ -41,10 +53,6 @@ module.exports = db.define('category',
     description: {
       type: DataTypes.TEXT,
       comment: '分类描述'
-    },
-    path: {
-      type: DataTypes.STRING,
-      comment: '无线分类层级路径'
     },
     seo_title: {
       type: DataTypes.STRING,
@@ -76,3 +84,4 @@ module.exports = db.define('category',
     }
   }, options)
 
+module.exports = CategoryModel

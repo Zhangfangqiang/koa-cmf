@@ -9,8 +9,7 @@ const CategoryModel = require('./category-model')
  * 还可以自动根据模型创建数据库
  * @type {ModelCtor<Model>}
  */
-
-module.exports = db.define('category_content',
+var CategoryContentModel = db.define('category_content',
   /*模型配置*/
   {
     id: {
@@ -39,7 +38,7 @@ module.exports = db.define('category_content',
     },
     list_order: {
       type: DataTypes.BIGINT.UNSIGNED,
-      default: '10000',
+      defaultValue: '10000',
       comment: '排序'
     },
     status: {
@@ -48,6 +47,4 @@ module.exports = db.define('category_content',
     },
   }, options)
 
-
-
-
+module.exports = CategoryContentModel

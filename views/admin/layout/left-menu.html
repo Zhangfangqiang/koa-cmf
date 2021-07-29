@@ -4,26 +4,24 @@
       <span>layuiAdmin</span>
     </div>
 
-    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
-        lay-filter="layadmin-system-side-menu">
-
-
-
+    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
       <li data-name="home" class="layui-nav-item layui-nav-itemed">
         <a href="javascript:;" lay-tips="主页" lay-direction="2">
           <i class="layui-icon layui-icon-home"></i>
           <cite>主页</cite>
         </a>
         <dl class="layui-nav-child">
-          <dd data-name="console" class="layui-this">
+          <dd data-name="user" class="layui-this">
             <a lay-href="/admin/user/index">用户中心</a>
           </dd>
-
+          <dd data-name="category">
+            <a lay-href="/admin/category/index">分类管理</a>
+          </dd>
+          <dd data-name="content">
+            <a lay-href="/admin/content/index">内容管理</a>
+          </dd>
         </dl>
       </li>
-
-
-
     </ul>
   </div>
 </div>

@@ -9,7 +9,7 @@ const common    = require('../lib/common')                     //常用
  * 还可以自动根据模型创建数据库
  * @type {ModelCtor<Model>}
  */
-module.exports = db.define('user',
+var UserModel = db.define('user',
   /*模型配置*/
   {
     id: {
@@ -91,6 +91,7 @@ module.exports = db.define('user',
       get() {
         return moment(this.getDataValue('last_login_at')).tz("Asia/Shanghai").format('YYYY-MM-DD HH:mm:ss')
       }
+
     }
   },   {
     ...options,
@@ -98,3 +99,5 @@ module.exports = db.define('user',
       {unique: true, fields: ['phone', 'email', 'login_name', 'open_id']}
     ]
   })
+
+module.exports = UserModel

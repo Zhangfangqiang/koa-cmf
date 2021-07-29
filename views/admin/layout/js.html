@@ -1,21 +1,31 @@
 <script src="/public/layuiadmin/layui/layui.js"></script>
 <script>
   layui.config({
-    base: '/public/layuiadmin/' //静态资源所在路径
+    base: '/public/layuiadmin/' /*静态资源所在路径*/
   }).extend({
-    index: 'lib/index' //主入口模块
-  }).use('index');
+    index: 'lib/index' /*主入口模块*/
+  }).use(['index'])
 
+  var $         = layui.$;
+  var setter    = layui.setter;
+  var admin     = layui.admin;
+  var form      = layui.form;
+  var router    = layui.router();
+  var search    = router.search;
+  var table     = layui.table;
+  var laydate   = layui.laydate;
+  var upload    = layui.upload;
+  var treeTable = layui.treeTable;
 
-  var $       = layui.$;
-  var setter  = layui.setter;
-  var admin   = layui.admin;
-  var form    = layui.form;
-  var router  = layui.router();
-  var search  = router.search;
-  var table   = layui.table;
-  var laydate = layui.laydate;
-  var upload  = layui.upload;
+  /**
+   * 前置设置ajax
+   */
+  $.ajaxSetup({
+    cache: false,
+    headers: {
+      'Authorization' : `Bearer ${localStorage.getItem('token')}`
+    }
+  });
 
 
   /**
@@ -23,20 +33,17 @@
    */
   function msgAndJump(res,fn) {
     if (res.code == 0) {
-
-      if (fn){fn(res)}
-
+      if (typeof fn == 'function'){fn(res)}
       //弹出正确消息
       layer.msg(res.msg, {time: 5000, icon: 6})
       //倒计时
-      //setInterval(function () {
-      //  if (res.url) {
-      //    window.location.href = res.url
-      //  } else {
-      //    location.reload()
-      //  }
-      //}, 1000)
-
+      setInterval(function () {
+        if (res.url) {
+          window.location.href = res.url
+        } else {
+          location.reload()
+        }
+      }, 1000)
     } else {
       //弹出错误消息
       layer.msg(res.msg, {time: 5000, icon: 2})
@@ -69,7 +76,12 @@
             success: function (res) {
               layer.msg(res.msg);
               if(res.code == 0){
-                table.reload(tableName);  //刷新表
+                table.reload(tableName);      //刷新表
+                try{
+                  treeTable.reload(tableName);  //刷新表
+                }catch (e){
+                  console.log('没有treeTable这个表')
+                }
                 layer.close(index);   //关闭一个弹框
               }
             }
@@ -225,9 +237,8 @@
       data    : data.field,
       async   : true, //异步
       success : function (res) {
-        msgAndJump(res,(res)=>{
-          console.log(res.data.token)
-
+        msgAndJump(res, (res) => {
+          localStorage.setItem('token', res.data.token)
         })
       }
     });
@@ -277,8 +288,91 @@
     error: function () {
       layer.msg('出了点错请稍后再试', {time: 5000, icon: 2})
     }
-  });
+  })
 
+  /**
+   * treeSelect 下拉树状选项框
+   */
+  function treeSelect(url, el, field, selectData = null, name = 'parent_id') {
+    $.get({
+      url      : url,
+      data     : {tree:true},
+      dataType : "json",
+      async    : true,
+      success  : function (res) {
+        xmSelect.render({
+          el        : el,
+          name      : name,
+          radio     : true,
+          clickClose: true,
+          tree: {
+            show          : true,       //是否显示树状结构
+            strict        : false,      //是否严格遵守父子模式
+            expandedKeys  : true,       //默认展开节点的数组, 为 true 时, 展开所有节点
+            showFolderIcon: true,       //是否展示三角图标
+            showLine      : true,       //是否显示虚线
+            indent        : 20,         //间距
+            simple        : false,      //是否开启极简模式
+            clickExpand   : false,      //点击节点是否展开
+            clickCheck    : true        //点击节点是否选中
+          },
+          filterable: true,
+          height    : '250px',
+          data      : xmDefaultSelect([{name: '作为顶级', value: null}].concat(treeFormat(res.data, field)), selectData, name)
+        })
+      }
+    });
+  }
 
+  /**
+   * 递归选中默认值
+   * @param array
+   * @param selectData
+   * @param name
+   * @returns {*}
+   */
+  function xmDefaultSelect(array, selectData, name) {
+    if (selectData) {
+      for(var k in array){
 
+        if (array[k].value === selectData[name]) {
+          array[k].selected = true
+        }
+
+        if (array[k].children) {
+          xmDefaultSelect(array[k].children, selectData, name)
+        }
+      }
+      return array;
+    } else {
+      return array;
+    }
+  }
+
+  /**
+   * 数据格式转换
+   * @param arr
+   * @param field
+   * @returns {*[]}
+   */
+  function treeFormat(arr, field) {
+    if (!Array.isArray(arr)) return
+    let newTree = []
+    arr.map(el => {
+      if (el[field] && el[field].length) {
+        let childNode = treeFormat(el[field], field)
+        newTree.push({
+          name    : el.name,
+          value   : el.id,
+          children: childNode
+        })
+      } else {
+        newTree.push({
+          name    : el.name,
+          value   : el.id,
+        })
+      }
+    })
+    return newTree
+  }
 </script>

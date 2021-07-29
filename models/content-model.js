@@ -1,7 +1,9 @@
-const db        = require("./db-mysql")
-const options   = require('../config/model')
-const DataTypes = require('sequelize')
-const UserModel = require('./user-model')
+const db                   = require("./db-mysql")
+const options              = require('../config/model')
+const DataTypes            = require('sequelize')
+const UserModel            = require('./user-model')
+
+
 
 /**
  * 定义模型并且抛出,这里的模型不光可以当模型
@@ -9,7 +11,7 @@ const UserModel = require('./user-model')
  * @type {ModelCtor<Model>}
  */
 
-module.exports = db.define('content',
+var ContentModel = db.define('content',
   /*模型配置*/
   {
     id: {
@@ -21,6 +23,15 @@ module.exports = db.define('content',
     parent_id: {
       type: DataTypes.BIGINT.UNSIGNED,
       comment: '父id'
+    },
+    path: {
+      type: DataTypes.STRING,
+      comment: '无线分类层级路径',
+    },
+    level:{
+      type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue:0,
+      comment: '层级'
     },
     type: {
       type: DataTypes.BIGINT.UNSIGNED,
@@ -99,6 +110,10 @@ module.exports = db.define('content',
       type: DataTypes.TEXT,
       comment: '过滤后的内容'
     },
+    more: {
+      type: DataTypes.JSON,
+      comment: '扩展属性'
+    },
     published_at: {
       type: DataTypes.DATE,
       comment: '发布时间'
@@ -107,8 +122,6 @@ module.exports = db.define('content',
       type: DataTypes.DATE,
       comment: '删除时间'
     },
-    more: {
-      type: DataTypes.JSON,
-      comment: '扩展属性'
-    },
   }, options)
+
+module.exports = ContentModel

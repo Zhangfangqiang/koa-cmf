@@ -78,8 +78,6 @@ router.post('/login', async (ctx, next) => {
   let {username, password, vercode} = ctx.request.body
       password                      = common.createPassword(password)
 
-  //let token = ctx.request.header.authorization
-
   let user = await UserModel.findOne({where: {
       [Op.or]: [
         {password: password, phone: username},
@@ -91,7 +89,6 @@ router.post('/login', async (ctx, next) => {
     ctx.body = {code: 400, msg: '用户不存在'}
     return
   }
-
   await user.update({'last_login_at': Date()})
 
   let token        = jsonwebtoken.sign(JSON.parse(JSON.stringify(user)), appConfig.jwtSecret, {expiresIn: '3d'})
