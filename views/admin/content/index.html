@@ -94,14 +94,15 @@
     toolbar      : '#content-toolbar',
     cellMinWidth :80,
     cols: [[
-      {field: "id"         , title: "id" ,    width: 80},
-      {field: "nick_name"  , title: "名称",    minWidth: 150},
-      {field: "avatar_url" , title: "头像",    templet: '<div><img src="{{!d.avatar_url}}" alt=""></div>' , style: 'height:78px' ,  width: 150},
-      {field: "email"      , title: "邮箱",    minWidth: 150},
-      {field: "phone"      , title: "手机",    minWidth: 150},
-      {field: "sex"        , title: "性别"  ,  templet: function(d){var json = {1:'男',2:'女',3:'未知'};return json[d.sex];} ,  width: 70},
-      {field: "created_at" , title: "创建时间", minWidth: 150  },
-      {title: "操作"        , align: "center", fixed: "right", toolbar: "#content-tool",  width: 150}
+      {field: "id",          title: "id" ,                     width: 70},
+      {field: "title",       title: "标题",                     minWidth: 150},
+      {                      title: "分类",                     width: 80,   templet: function(d) {let str = '';d.categories.forEach((item) => {str += `<span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">${item.name}</span>`});return str;}},
+      {                      title: "作者",                     width: 80,      templet: '<div>{{!d.user.nick_name}}</div>' },
+      {                      title: "点击量|评论量|点赞量|评论量",  width: 220,   templet: '<div><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.hits_count}}</span><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.comment_count}}</span><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.like_count}}</span><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.favorites_count}}</span></div>'},
+      {                      title: "关键字|来源|摘要|缩略图",     width: 200,    templet: function(d){let str = '';[d.keywords, d.source, d.excerpt, d.thumbnail].forEach((itme) => {if(itme){str += `<span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green"><i class="layui-icon layui-icon-ok"></i></span>`}else{str += `<span class="layui-btn layui-btn-xs "><i class="layui-icon layui-icon-close"></i></span>`}});return str;} , align: "center"},
+      {                      title: "发布|置顶|重点|评论",        width: 200,    templet: function(d){var json = {1: '<span class="layui-btn layui-btn-xs layui-btn-primary layui-border-red"><i class="layui-icon layui-icon-close"></i></span>', 2: '<span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green"><i class="layui-icon layui-icon-ok "></i></span>',};return `${json[d.status]} ${json[d.is_top]} ${json[d.is_recommended]} ${json[d.comment_status]}`} , align: "center"},
+      {field: "created_at",  title: "创建时间",                  width: 180  },
+      {                      title: "操作",                     width: 150   , align: "center", fixed: "right", toolbar: "#content-tool"}
     ]],
     page: !0,
     limit: 20,
@@ -126,9 +127,9 @@
         '/api/content/'+dataId,
         'content-update-submit',
         'content-table',
-        '用户编辑',
-        '335px',
-        '500px',
+        '内容编辑',
+        '700px',
+        '750px',
         'PUT'
       )
     }
@@ -156,8 +157,9 @@
         '/api/content/create',
         'content-store-submit',
         'content-table',
-        '用户创建',
-        '335px'
+        '内容创建',
+        '700px',
+        '750px',
       )
     }
   })

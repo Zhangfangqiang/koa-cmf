@@ -13,14 +13,14 @@ router.post('/index', async (ctx, next) => {
   if (ctx.request.files.files && ctx.request.files.files instanceof Array) {
     const data = [];
     for (item in ctx.request.files.files) {
-      data.push(common.mvFile(ctx.request.files.files[item], savePath))
+      data.push(common.mvFile(ctx.request.files.files[item], savePath, ctx))
     }
     ctx.body = {code: 0, data}
   }
 
   /*单文件*/
   if (ctx.request.files.file  && ctx.request.files.file instanceof Object) {
-    const file = common.mvFile(ctx.request.files.file, savePath)
+    const file = common.mvFile(ctx.request.files.file, savePath, ctx)
     ctx.body   = {code: 0, data: file}
   }
 })

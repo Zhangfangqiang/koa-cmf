@@ -1,4 +1,5 @@
 module.exports = () => {
+  const UserModel            = require('./user-model')
   const ContentModel         = require('./content-model')
   const CategoryModel        = require('./category-model')
   const CategoryContentModel = require('./category-content-model')
@@ -12,6 +13,9 @@ module.exports = () => {
     foreignKey: 'content_id', //通过外键postId
     constraints: false
   })
+
+  ContentModel.belongsTo(UserModel,{foreignKey: 'user_id', targetKey: 'id'})
+
 
   /*多对多*/
   CategoryModel.belongsToMany(ContentModel, {

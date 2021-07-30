@@ -33,17 +33,23 @@ var ContentModel = db.define('content',
       defaultValue:0,
       comment: '层级'
     },
+    list_order:{
+      type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: '10000',
+      allowNull: false,
+      comment: '排序'
+    },
     type: {
       type: DataTypes.BIGINT.UNSIGNED,
       comment: '1文章 , 2页面'
     },
     is_top: {
       type: DataTypes.BIGINT.UNSIGNED,
-      comment: '是否置顶'
+      comment: '是否置顶 1不置顶 2置顶'
     },
     is_recommended: {
       type: DataTypes.BIGINT.UNSIGNED,
-      comment: '是否推荐'
+      comment: '是否推荐 1不推荐 2推荐'
     },
     status: {
       type: DataTypes.BIGINT.UNSIGNED,

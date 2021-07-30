@@ -1,3 +1,4 @@
+<script src="/public/js/wangEditor.min.js"></script>
 <script src="/public/layuiadmin/layui/layui.js"></script>
 <script>
   layui.config({
@@ -279,8 +280,8 @@
       if (res.code == 0) {
         id       = $(this.item).data('id');
         console.log(res.data)
-        $('#' + id).val(res.data)                    //设置input值
-        $('#' + id + '_img').attr('src', res.data)   //设置更新头像路径
+        $('#' + id).val(res.data.filePath)                    //设置input值
+        $('#' + id + '_img').attr('src', res.data.fileUrl)    //设置更新头像路径
       }else{
         layer.msg(res.msg, {time: 5000, icon: 2})
       }
@@ -289,6 +290,67 @@
       layer.msg('出了点错请稍后再试', {time: 5000, icon: 2})
     }
   })
+
+  /**
+   * 多图上传开始
+   */
+  upload.render({
+    elem      : '.zf-upload-imgs',
+    url       : '/api/upload/index',
+    multiple  : true,
+    number    : '9',                                 //上传数量
+    size      : '10240',                             //文件大小
+    field     : 'file',                              //字段名称
+    accept    : 'images',                            //所有图片类型
+    done: function (res, index, upload) {
+      if (res.code == 0) {
+        id       = $(this.item).data('id');                       //获取data-id
+        moreUl   = $(this.item).prevAll('.zf-upload-imgs-ul');   //获取同级网上列表
+        liId     = new  Date().getTime()
+        element  = $(`<li id="${id +'-'+ liId}">
+                        <input type="hidden" name="${id}_urls[]"  value="${res.data.filePath}">
+                        <input type="hidden" name="${id}_names[]" value="${res.data.fileName}">
+                        <img src="${res.data.fileUrl}">
+                        <a href="javascript:(function(){$('#${id +'-'+ liId}').remove();})();"><i class="layui-icon layui-icon-close"></i></a>
+                      </li>`)
+
+        moreUl.append(element)
+      }else{
+        layer.msg(res.msg, {time: 5000, icon: 2})
+      }
+    },
+  });
+
+  /**
+   * 多文件上传开始
+   */
+  upload.render({
+    elem      : '.zf-upload-files',
+    url       : '/api/upload/index',
+    multiple  : true,
+    number    : '20',                                                   //上传数量
+    size      : '10240000',                                            //文件大小
+    field     : 'file',                                                //字段名称
+    accept    : 'file',                                                //所有文件类型
+    exts      : 'doc|docx|xls|xlsx|ppt|pptx|pdf|txt|md|xml|zip|rar|7z',//允许格式
+    done: function (res, index, upload) {
+      if (res.code == 0) {
+        id       = $(this.item).data('id');                        //获取data-id
+        moreUl   = $(this.item).prevAll('.zf-upload-files-ul')     //获取同级网上列表
+        liId     = new  Date().getTime()
+
+        element  = $(`<li id="${id +'-'+ liId}">
+                        <input type="hidden" name="${id}_urls[]"  value="${res.data.filePath}">
+                        <input class="layui-input layui-unselect fl" disabled name="${id}_names[]" value="${res.data.fileName}">
+                        <a     class="fl" href="javascript:(function(){$('#${id +'-'+ liId}').remove();})();"><i class="layui-icon layui-icon-close"></i></a>
+                      </li>`)
+
+        moreUl.append(element)
+      }else{
+        layer.msg(res.msg, {time: 5000, icon: 2})
+      }
+    },
+  });
 
   /**
    * treeSelect 下拉树状选项框
@@ -375,4 +437,14 @@
     })
     return newTree
   }
+
+  /**
+   * 编辑器管理
+   */
+  if (document.querySelector('#editor')) {
+    editor = new window.wangEditor('#editor')
+    editor.create()
+  }
+
+
 </script>
