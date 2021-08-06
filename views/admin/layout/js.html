@@ -1,5 +1,6 @@
 <script src="/public/js/wangEditor.min.js"></script>
 <script src="/public/layuiadmin/layui/layui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 <script>
   layui.config({
     base: '/public/layuiadmin/' /*静态资源所在路径*/
@@ -54,20 +55,30 @@
   /**
    * 表单弹出表单
    */
-  function zfPopupForm(pageUrl, postUrl, submitID, tableName, title, height = '330px', width = '500px', type = 'POST') {
+  function zfPopupForm(pageUrl, postUrl, submitID, tableName, title, height = '330px', width = '500px', type = 'POST', maxmin = false) {
     layer.open({
       title   : title,
       type    : 2,
       area    : [width, height],
+      maxmin  : maxmin,
       content : window.location.origin + pageUrl,
       btn     : ['确定', '取消'],
       yes     : function (index, layero) {
+        if (maxmin) {layer.full(index)
+          console.log()
+        }
         var iframeWindow = window['layui-layer-iframe' + index];                    //或如iframe
         var submit       = layero.find('iframe').contents().find('#' + submitID);
 
         //监听提交
         iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
           var field = data.field;     //获取提交的字段
+
+          if (iframeWindow.editor) {
+            field.content          = iframeWindow.editor.txt.html()
+            field.content_filtered = iframeWindow.editor.txt.text()
+          }
+
           //提交 Ajax 成功后，静态更新表格中的数据
           $.ajax({
             url     : postUrl,
@@ -279,7 +290,7 @@
     done: function (res, index, upload) {
       if (res.code == 0) {
         id       = $(this.item).data('id');
-        console.log(res.data)
+
         $('#' + id).val(res.data.filePath)                    //设置input值
         $('#' + id + '_img').attr('src', res.data.fileUrl)    //设置更新头像路径
       }else{
@@ -326,24 +337,32 @@
    */
   upload.render({
     elem      : '.zf-upload-files',
-    url       : '/api/upload/index',
     multiple  : true,
     number    : '20',                                                   //上传数量
     size      : '10240000',                                            //文件大小
-    field     : 'file',                                                //字段名称
-    accept    : 'file',                                                //所有文件类型
-    exts      : 'doc|docx|xls|xlsx|ppt|pptx|pdf|txt|md|xml|zip|rar|7z',//允许格式
     done: function (res, index, upload) {
       if (res.code == 0) {
         id       = $(this.item).data('id');                        //获取data-id
         moreUl   = $(this.item).prevAll('.zf-upload-files-ul')     //获取同级网上列表
         liId     = new  Date().getTime()
 
-        element  = $(`<li id="${id +'-'+ liId}">
+        switch (id) {
+          case 'images':
+            element = $(`<li class="images-li" id="${id + '-' + liId}">
+                        <input type="hidden" name="${id}_urls[]"  value="${res.data.filePath}">
+                        <input type="hidden" name="${id}_names[]" value="${res.data.fileName}">
+                        <img src="${res.data.fileUrl}">
+                        <a href="javascript:(function(){$('#${id + '-' + liId}').remove();})();"><i class="layui-icon layui-icon-close"></i></a>
+                      </li>`)
+            break
+          default:
+            element = $(`<li class="default-li" id="${id + '-' + liId}">
                         <input type="hidden" name="${id}_urls[]"  value="${res.data.filePath}">
                         <input class="layui-input layui-unselect fl" disabled name="${id}_names[]" value="${res.data.fileName}">
-                        <a     class="fl" href="javascript:(function(){$('#${id +'-'+ liId}').remove();})();"><i class="layui-icon layui-icon-close"></i></a>
+                        <a     class="fl" href="javascript:(function(){$('#${id + '-' + liId}').remove();})();"><i class="layui-icon layui-icon-close"></i></a>
                       </li>`)
+            break
+        }
 
         moreUl.append(element)
       }else{
@@ -355,7 +374,7 @@
   /**
    * treeSelect 下拉树状选项框
    */
-  function treeSelect(url, el, field, selectData = null, name = 'parent_id') {
+  function treeSelect(url, el, field, selectData = null, name = 'parent_id', radio = true) {
     $.get({
       url      : url,
       data     : {tree:true},
@@ -365,7 +384,7 @@
         xmSelect.render({
           el        : el,
           name      : name,
-          radio     : true,
+          radio     : radio,            //单选
           clickClose: true,
           tree: {
             show          : true,       //是否显示树状结构
@@ -380,7 +399,13 @@
           },
           filterable: true,
           height    : '250px',
-          data      : xmDefaultSelect([{name: '作为顶级', value: null}].concat(treeFormat(res.data, field)), selectData, name)
+          data      : () => {
+            if(name == 'parent_id'){
+              return xmDefaultSelect([{name: '作为顶级', value: null}].concat(treeFormat(res.data, field)), selectData, name)
+            }else{
+              return xmDefaultSelect(treeFormat(res.data, field), selectData, name)
+            }
+          }
         })
       }
     });
@@ -396,9 +421,14 @@
   function xmDefaultSelect(array, selectData, name) {
     if (selectData) {
       for(var k in array){
-
-        if (array[k].value === selectData[name]) {
-          array[k].selected = true
+        if (selectData instanceof Array) {
+          if(selectData.indexOf(array[k].value) != -1){
+            array[k].selected = true
+          }
+        } else {
+          if (array[k].value === selectData[name]) {
+            array[k].selected = true
+          }
         }
 
         if (array[k].children) {
@@ -443,6 +473,9 @@
    */
   if (document.querySelector('#editor')) {
     editor = new window.wangEditor('#editor')
+    editor.config.uploadImgServer   = '/api/upload/wangEditor'        //图片上传配置
+    editor.config.uploadVideoServer = '/api/upload/wangEditorVideo'   //视频上传配置
+    editor.config.height            = 500
     editor.create()
   }
 

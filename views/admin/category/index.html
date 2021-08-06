@@ -76,6 +76,7 @@
   form.on('submit(category-search)', function (data) {
     //执行重载
     treeTable.reload('category-table', {
+      page: {curr: 1},
       where: {'where': queryConversion()},
     });
   });

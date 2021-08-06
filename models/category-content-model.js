@@ -43,6 +43,7 @@ var CategoryContentModel = db.define('category_content',
     },
     status: {
       type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: '1',
       comment: '状态,1:不发布 2:发布;'
     },
   }, options)

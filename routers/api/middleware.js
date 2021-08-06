@@ -2,6 +2,7 @@ const jsonwebtoken  = require('jsonwebtoken')                        //签发验
 const koajwt        = require('koa-jwt')                             //给我的感觉就看看head有没有token
 const appConfig     = require('../../config/app')
 const util          = require('util');
+const UserModel     = require('../../models/user-model')
 
 module.exports = (router) => {
 
@@ -23,6 +24,12 @@ module.exports = (router) => {
   //  }
   //  await next()    //所有next都要加await，重要！
   //})
+
+  router.use(async (ctx, next) => {
+    ctx['user'] = await UserModel.findByPk(1)
+    ctx['user'] = ctx['user'].toJSON()
+    await next()
+  })
 }
 
 

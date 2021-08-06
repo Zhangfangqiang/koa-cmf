@@ -81,6 +81,7 @@
   form.on('submit(user-search)', function (data) {
     //执行重载
     table.reload('user-table', {
+      page: {curr: 1},
       where: {'where': queryConversion()},
     });
   });
@@ -103,7 +104,7 @@
       {field: "created_at" , title: "创建时间", minWidth: 150  },
       {title: "操作"        , align: "center", fixed: "right", toolbar: "#user-tool",  width: 150}
     ]],
-    page: !0,
+    page: true,
     limit: 20,
     limits: [20, 50, 100],
     text: "对不起，加载出现异常！",

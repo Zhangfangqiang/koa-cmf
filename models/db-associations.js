@@ -1,8 +1,10 @@
 module.exports = () => {
-  const UserModel            = require('./user-model')
-  const ContentModel         = require('./content-model')
-  const CategoryModel        = require('./category-model')
-  const CategoryContentModel = require('./category-content-model')
+  const UserModel             = require('./user-model')
+  const ContentModel          = require('./content-model')
+  const CategoryModel         = require('./category-model')
+  const CategoryContentModel  = require('./category-content-model')
+  const ContentAttrKeyModel   = require('./content-attr-key-model')
+  const ContentAttrValueModel = require('./content-attr-value-model')
 
   /*多对多*/
   ContentModel.belongsToMany(CategoryModel, {
@@ -29,4 +31,7 @@ module.exports = () => {
 
   /*一对多关联子集*/
   CategoryModel.hasMany(CategoryModel, {foreignKey: 'parent_id', targetKey: 'id'});
+
+  /*一对多一个键 下多个 值*/
+  ContentAttrKeyModel.hasMany(ContentAttrValueModel, {foreignKey: 'attr_key_id', targetKey: 'id'});
 }

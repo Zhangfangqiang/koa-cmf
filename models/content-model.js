@@ -1,8 +1,7 @@
-const db                   = require("./db-mysql")
-const options              = require('../config/model')
-const DataTypes            = require('sequelize')
-const UserModel            = require('./user-model')
-
+const db        = require("./db-mysql")
+const options   = require('../config/model')
+const DataTypes = require('sequelize')
+const UserModel = require('./user-model')
 
 
 /**
@@ -10,7 +9,6 @@ const UserModel            = require('./user-model')
  * 还可以自动根据模型创建数据库
  * @type {ModelCtor<Model>}
  */
-
 var ContentModel = db.define('content',
   /*模型配置*/
   {
@@ -28,12 +26,12 @@ var ContentModel = db.define('content',
       type: DataTypes.STRING,
       comment: '无线分类层级路径',
     },
-    level:{
+    level: {
       type: DataTypes.BIGINT.UNSIGNED,
-      defaultValue:0,
+      defaultValue: 0,
       comment: '层级'
     },
-    list_order:{
+    list_order: {
       type: DataTypes.BIGINT.UNSIGNED,
       defaultValue: '10000',
       allowNull: false,
@@ -41,51 +39,61 @@ var ContentModel = db.define('content',
     },
     type: {
       type: DataTypes.BIGINT.UNSIGNED,
-      comment: '1文章 , 2页面'
+      defaultValue: 1,
+      comment: '1文章 , 2商品'
     },
     is_top: {
       type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: 1,
       comment: '是否置顶 1不置顶 2置顶'
     },
     is_recommended: {
       type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: 1,
       comment: '是否推荐 1不推荐 2推荐'
     },
     status: {
       type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: 1,
       comment: '状态 1未发布 , 2发布'
     },
     comment_status: {
       type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: 2,
       comment: '状态 1不允许评论  2 允许评论',
     },
     format: {
       type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: 1,
       comment: '内容格式;1:html; 2:md'
     },
     user_id: {
       type: DataTypes.BIGINT.UNSIGNED,
       comment: '用户id',
       references: {                           //关联
-        model     : UserModel,
-        key       : 'id',
+        model: UserModel,
+        key: 'id',
         deferrable: DataTypes.Deferrable.INITIALLY_IMMEDIATE    //设置约束类型
       }
     },
     hits_count: {
       type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: 0,
       comment: '点击数'
     },
     favorites_count: {
       type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: 0,
       comment: '收藏数'
     },
     like_count: {
       type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: 0,
       comment: '点赞数'
     },
     comment_count: {
       type: DataTypes.BIGINT.UNSIGNED,
+      defaultValue: 0,
       comment: '品论数'
     },
     title: {
@@ -115,6 +123,12 @@ var ContentModel = db.define('content',
     content_filtered: {
       type: DataTypes.TEXT,
       comment: '过滤后的内容'
+    },
+    price: {
+      type         : DataTypes.DECIMAL(9, 2),
+      defaultValue : 0,
+      allowNull    : false,
+      comment      : '价格'
     },
     more: {
       type: DataTypes.JSON,

@@ -25,4 +25,36 @@ router.post('/index', async (ctx, next) => {
   }
 })
 
+/**
+ * wangEditor 图片上传配置开始
+ */
+router.post('/wangEditor', async (ctx, next) => {
+  let   data     = []
+  const savePath = path.join(__dirname, '../../public/upload')
+
+  for (item in ctx.request.files) {
+    let {filePath, newFileName, fileUrl} = common.mvFile(ctx.request.files[item], savePath, ctx)
+    data.push({url: fileUrl, alt: fileUrl, href: fileUrl})
+  }
+
+  ctx.body = {"errno": 0, "data": data}
+})
+
+/**
+ * wangEditor 视频上传配置开始
+ */
+router.post('/wangEditorVideo', async (ctx, next) => {
+  let   data     = {}
+  const savePath = path.join(__dirname, '../../public/upload')
+
+  console.log(ctx.request.files)
+
+  for (item in ctx.request.files) {
+    let {filePath} = common.mvFile(ctx.request.files[item], savePath, ctx)
+        data.url   = filePath
+  }
+
+  ctx.body = {"errno": 0, "data": data}
+})
+
 module.exports = router
