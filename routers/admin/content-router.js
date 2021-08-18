@@ -2,10 +2,10 @@ const Router                = require("@koa/router")                           /
 const router                = new Router({prefix: '/admin/content'})           //实例化定义前戳
 const ContentModel          = require('../../models/content-model')            //分类模型
 const CategoryModel         = require('../../models/category-model')           //分类模型
-const CategoryContentModel  = require('../../models/category-content-model')   //分类模型
-const ContentAttrKeyModel   = require('../../models/content-attr-key-model')   //属性键
-const ContentAttrValueModel = require('../../models/content-attr-value-model') //属性值
 const ContentSkuModel       = require('../../models/content-sku-model')        //内容sku
+const ContentAttrKeyModel   = require('../../models/content-attr-key-model')   //属性键
+const CategoryContentModel  = require('../../models/category-content-model')   //分类模型
+const ContentAttrValueModel = require('../../models/content-attr-value-model') //属性值
 const casual                = require('casual');                               //假数据生成
 const common                = require('../../lib/common')                      //引入常用函数
 const adminMiddleware       = require('./middleware');adminMiddleware(router)
@@ -145,12 +145,20 @@ router.get('/create', async (ctx, next) => {
 })
 
 /**
- * 编辑用户页面
+ * 编辑页面
  */
 router.get('/:id/edit', async (ctx, next) => {
   let {id}   = ctx.params
   let {type} = ctx.qs
   await ctx.render(`admin/content/edit${type}`, {updateUrl: `/api/content/${id}`})
+})
+
+/**
+ * 编辑sku页面
+ */
+router.get('/:id/edit_sku', async (ctx, next) => {
+  let {id} = ctx.params
+  await ctx.render('admin/content/edit_sku', {id})
 })
 
 module.exports = router

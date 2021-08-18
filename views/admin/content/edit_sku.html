@@ -1,0 +1,63 @@
+{{extend 'admin/layout/index.html'}}
+
+<!--后置css样式开始-->
+{{block 'after-css'}}
+<style>
+    body {
+        background: #fff;
+    }
+    .layui-fluid {
+        padding: 0px;
+    }
+</style>
+{{/block}}
+<!--后置css样式结束-->
+
+<!--中间内容开始-->
+{{block 'content'}}
+<div class="layui-fluid">
+  <div class="layui-card">
+
+    <!--数据展示开始-->
+    <div class="layui-card-body">
+      <!--表格数据内容开始-->
+      <table id="content-sku-table" lay-filter="content-sku-table"></table>
+      <!--表格数据内容结束-->
+    </div>
+    <!--数据展示结束-->
+  </div>
+</div>
+{{/block}}
+<!--中间内容结束-->
+
+<!--之后JavaScript开始-->
+{{block 'after-js'}}
+<script>
+  table.render({
+    url         : '/api/content/sku/index?id={{id}}',
+    elem        : '#content-sku-table',
+    cols: [[
+      {field:'id',               title:'ID'},
+      {field:'content_sku_desc', title:'商品属性',  edit:'text'},
+      {field:'price',            title:'价格',     edit:'text'},
+      {field:'stock',            title:'数量',     edit:'text'}
+    ]]
+  });
+
+  table.on('edit(content-sku-table)', function(obj){
+    var value = obj.value,  //得到修改后的值
+        data  = obj.data,   //得到所在行所有键值
+        field = obj.field;  //得到字段
+
+    $.ajax({
+      url     : `/api/content/${data.id}/sku`,
+      dataType: "json",
+      type    : 'PUT',
+      data    : {field: field, value: value},
+      async   : true, //异步
+      success : function (res) {}
+    });
+  });
+</script>
+{{/block}}
+<!--之后JavaScript结束-->

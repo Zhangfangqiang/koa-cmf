@@ -1,0 +1,43 @@
+{{extend 'admin/layout/index.html'}}
+
+{{block 'content'}}
+<div class="layui-card zf-parent-body-white" style="margin-bottom: 0px;">
+  <div class="layui-card-body">
+    <form class="layui-form" lay-filter="slide-update-form">
+      <div class="layui-form-item">
+        <label class="layui-form-label">状态：</label>
+        <div class="layui-input-block">
+          <input type="checkbox"  name="status" lay-skin="switch" lay-filter="switchTest" lay-text="开启|关闭" value="2">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">名称：</label>
+        <div class="layui-input-block">
+          <input type="text" name="name" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">备注：</label>
+        <div class="layui-input-block">
+          <textarea rows="5" type="text" name="remark" style="resize: none;" lay-verify="required" placeholder="" autocomplete="off" class="layui-textarea"></textarea>
+        </div>
+      </div>
+      <input type="button" hidden id="slide-update-submit" lay-filter="slide-update-submit" lay-submit value="确认">
+    </form>
+  </div>
+</div>
+{{/block}}
+
+{{block 'after-js'}}
+<script>
+  $.ajax({
+    url     : '{{updateUrl}}',
+    type    : 'GET',
+    dataType: 'json',
+    success : function (res) {
+      if (res.data.status == 1) {res.data.status = 0}
+      form.val("slide-update-form", res.data);
+    }
+  })
+</script>
+{{/block}}

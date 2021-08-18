@@ -97,23 +97,22 @@
         </div>
       </div>
 
-      <div id="attr_key_option">
+      <div id="attr_key_option" style="position: relative">
+        <button id="create_key_item" type="button" class="layui-btn layui-btn-xs" style="position: absolute; left: 430px; top: 8px;z-index: 99999999">增加</button>
         <label class="layui-form-label">属性名：</label>
-        <div class="layui-input-block" style="position: relative">
-          <button id="create_key_item" type="button" class="layui-btn layui-btn-xs" style="position: absolute;left: 320px;top: 8px;">增加</button>
+        <div class="layui-input-block" >
           <div id="attr_key_item">
-            <input type="text" name="attr_key[]" lay-verify="required" placeholder="" autocomplete="off" class="layui-input" style="width: 300px;">
+            <input type="text" name="attr_key[0]" lay-verify="required" placeholder="" autocomplete="off" class="layui-input" style="width: 300px;">
           </div>
           <label class="layui-form-label" style="width: auto;">属性值：</label>
           <div class="layui-input-block" style="position: relative">
-            <button onclick="createCreateValueItem(this)" type="button" data-id="1" class="layui-btn layui-btn-xs" style="position: absolute;left: 320px;top: 8px;">增加</button>
+            <button onclick="createCreateValueItem(this)" type="button" data-id="0" class="layui-btn layui-btn-xs" style="position: absolute;left: 320px;top: 8px;">增加</button>
             <div class="attr_value_item">
-              <input type="text" name="attr_value[1][]" lay-verify="required" placeholder="" autocomplete="off" class="layui-input" style="width: 300px;">
+              <input type="text" name="attr_value[0][]" lay-verify="required" placeholder="" autocomplete="off" class="layui-input" style="width: 300px;">
             </div>
           </div>
         </div>
       </div>
-
 
       <input type="button" hidden id="content-store-submit" lay-filter="content-store-submit" lay-submit value="确认">
     </form>
@@ -123,35 +122,31 @@
 
 {{block 'after-js'}}
 <script>
+  var keyId = 1
+
   treeSelect('/api/category/index?tree=1', '.category-tree-select', 'children', null, 'category_id',false)
 
-  var keyId = 2
   $('#create_key_item').click(function (){
     $('#attr_key_option').append(
-      '<div id="attr_key_option">' +
-      '  <label class="layui-form-label">属性名：</label>' +
+      '<label class="layui-form-label">属性名：</label>' +
+      '<div class="layui-input-block" style="position: relative">' +
+      '  <div id="attr_key_item">' +
+      '    <input type="text" name="attr_key['+keyId+']" lay-verify="required" placeholder="" autocomplete="off" class="layui-input" style="width: 300px;">' +
+      '  </div>' +
+      '  <label class="layui-form-label" style="width: auto;">属性值：</label>' +
       '  <div class="layui-input-block" style="position: relative">' +
-      '    <div id="attr_key_item">' +
-      '      <input type="text" name="attr_key[]" lay-verify="required" placeholder="" autocomplete="off" class="layui-input" style="width: 300px;">' +
-      '    </div>' +
-      '    <label class="layui-form-label" style="width: auto;">属性值：</label>' +
-      '    <div class="layui-input-block" style="position: relative">' +
-      '      <button onclick="createCreateValueItem(this)" type="button" data-id="'+keyId+'" class="layui-btn layui-btn-xs" style="position: absolute;left: 320px;top: 8px;">增加</button>' +
-      '      <div class="attr_value_item">' +
-      '        <input type="text" name="attr_value['+keyId+'][]" lay-verify="required" placeholder="" autocomplete="off" class="layui-input" style="width: 300px;">' +
-      '      </div>' +
+      '    <button onclick="createCreateValueItem(this)" type="button" data-id="'+keyId+'" class="layui-btn layui-btn-xs" style="position: absolute;left: 320px;top: 8px;">增加</button>' +
+      '    <div class="attr_value_item">' +
+      '      <input type="text" name="attr_value['+keyId+'][]" lay-verify="required" placeholder="" autocomplete="off" class="layui-input" style="width: 300px;">' +
       '    </div>' +
       '  </div>' +
       '</div>')
     keyId++
   })
 
-
   function createCreateValueItem(_this) {
     var id = $(_this).data('id')
     $(_this).nextAll('.attr_value_item').append(`<input type="text" name="attr_value[${id}][]" lay-verify="required" placeholder="" autocomplete="off" class="layui-input" style="width: 300px;">`)
   }
-
-
 </script>
 {{/block}}

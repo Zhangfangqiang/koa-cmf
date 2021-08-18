@@ -1,0 +1,184 @@
+{{extend 'admin/layout/index.html'}}
+
+<!--后置css样式开始-->
+{{block 'after-css'}}
+<style>
+    .layui-table-cell {
+        height: auto;
+    }
+    .layui-table-cell img{
+        display: block;
+        margin: 0 auto;
+    }
+</style>
+{{/block}}
+<!--后置css样式结束-->
+
+<!--中间内容开始-->
+{{block 'content'}}
+<div class="layui-fluid">
+  <div class="layui-card">
+
+    <!--搜索框开始-->
+    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+      <div class="layui-form-item">
+        <div class='layui-inline'>
+          <label class='layui-form-label'>ID</label>
+          <div class='layui-input-inline'>
+            <input type='text' name='id' placeholder='请输入' autocomplete='off' class='layui-input' data-where="in">
+          </div>
+        </div>
+        <div class='layui-inline'>
+          <label class='layui-form-label'>名称</label>
+          <div class='layui-input-inline'>
+            <input type='text' name='nick_name' placeholder='请输入' autocomplete='off' class='layui-input' data-where="like">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <button class="layui-btn layuiadmin-btn-list" lay-submit id="slide-search" lay-filter="slide-search">
+            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+          </button>
+          <button class="layui-btn layuiadmin-btn-order refresh">
+            <i class="layui-icon layui-icon-refresh-3 layuiadmin-button-btn"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!--搜索框结束-->
+
+    <!--数据展示开始-->
+    <div class="layui-card-body">
+      <!--表格数据内容开始-->
+      <table id="slide-table" lay-filter="slide-table"></table>
+      <!--表格数据内容结束-->
+
+
+      <!--数据表格头部工具栏开始-->
+      <script type="text/html" id="slide-toolbar">
+        <button class="layui-btn  layui-btn-sm" lay-event="create"><i class="layui-icon layui-icon-destory"></i>添加</button>
+      </script>
+      <!--数据表格头部工具栏结束-->
+
+      <!--对这条数据进行操作的操作栏开始-->
+      <script type="text/html" id="slide-tool">
+        <button class="layui-btn  layui-btn-sm" lay-event="slide-item">图片集</button>
+        <button class="layui-btn  layui-btn-sm" lay-event="edit">编辑</button>
+        <button class="layui-btn  layui-btn-sm" lay-event="destory">删除</button>
+      </script>
+      <!--对这条数据进行操作的操作栏结束-->
+    </div>
+    <!--数据展示结束-->
+  </div>
+</div>
+{{/block}}
+<!--中间内容结束-->
+
+<!--之后JavaScript开始-->
+{{block 'after-js'}}
+<script>
+  /**
+   * 监听搜索按钮
+   */
+  form.on('submit(slide-search)', function (data) {
+    //执行重载
+    table.reload('slide-table', {
+      page: {curr: 1},
+      where: {'where': queryConversion()},
+    });
+  });
+
+  /**
+   * 准备表单
+   */
+  table.render({
+    elem         : "#slide-table",
+    url          : "/api/slide/index",
+    toolbar      : '#slide-toolbar',
+    cellMinWidth :80,
+    cols: [[
+      {field: "id",      title: "id" ,         width: 80},
+      {field: "name",    title: "幻灯片名称",    width: 250},
+      {field: "remark",  title: "备注",         minWidth: 150 },
+      {field: "status",  title: "状态",         width: 100,    templet: function(d){if(d.status == 1){return '<button class="layui-btn layui-btn-xs layui-btn-danger">关闭</button>'}if(d.status == 2) {return '<button class="layui-btn layui-btn-xs">开启</button>'}}},
+      {                  title: "操作",         width: 250,    align: "center", fixed: "right", toolbar: "#slide-tool"}
+    ]],
+    page: true,
+    limit: 20,
+    limits: [20, 50, 100],
+    text: "对不起，加载出现异常！",
+  });
+
+  /**
+   * 监听表格操作工具栏
+   */
+  table.on('tool(slide-table)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+    var data     = obj.data;                    //获得当前行数据
+    var layEvent = obj.event;                   //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+    var dataId   = data.id;                     //id
+
+    /**
+     * 编辑方法开始
+     */
+    if (layEvent === 'edit') { //编辑
+      zfPopupForm(
+        '/admin/slide/'+dataId+'/edit',
+        '/api/slide/'+dataId,
+        'slide-update-submit',
+        'slide-table',
+        '幻灯片编辑',
+        '335px',
+        '500px',
+        'PUT'
+      )
+    }
+
+    /**
+     * 删除方法开始
+     */
+    if (layEvent === 'destory') {
+      zfDestroy('/api/slide/destroy', {where: {id: {'in': dataId}}}, obj)
+    }
+
+    /**
+     * 图片集管理
+     */
+    if(layEvent === 'slide-item'){
+      var slideItem = layer.open({
+        title  :'图片集',
+        type   : 2,
+        area   : ['1200px', '800px'],
+        maxmin  : true,
+        content: window.location.origin+'/admin/slide-item/index?id='+dataId,
+        cancel : function(index, layero){
+        }
+      });
+      layer.full(slideItem)
+    }
+  })
+
+  /**
+   * 监听表格头部工具栏
+   */
+  table.on('toolbar(slide-table)',function(obj){
+    var data     = obj.data;                  //获得当前行数据
+    var layEvent = obj.event;                 //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+    /**
+     * 添加数据的方法
+     */
+    if(layEvent === 'create'){
+      zfPopupForm(
+        '/admin/slide/create',
+        '/api/slide/create',
+        'slide-store-submit',
+        'slide-table',
+        '幻灯片创建',
+        '335px'
+      )
+    }
+  })
+
+
+</script>
+{{/block}}
+<!--之后JavaScript结束-->

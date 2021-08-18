@@ -8,13 +8,16 @@ const CategoryModel = require('../../models/category-model')          //用户�
  * 返回数据列表 正在使用
  */
 router.get('/index', async (ctx, next) => {
+
+  var {count, rows} = await CategoryModel.findAndCountAll(common.getSqlReady(ctx))
+
+  console.log(ctx.qs)
+
   if (!ctx.qs.where && ctx.qs.tree) {
-    var {count, rows} = await CategoryModel.findAndCountAll(common.getSqlReady(ctx))
-    ctx.body = {code: 0, msg: 'ok', data: common.getTree(rows), count}
-  } else {
-    var {count, rows} = await CategoryModel.findAndCountAll(common.getSqlReady(ctx))
-    ctx.body = {code: 0, msg: 'ok', data: rows, count}
+    rows = common.getTree(rows)
   }
+
+  ctx.body = {code: 0, msg: 'ok', data: rows, count}
 })
 
 /**

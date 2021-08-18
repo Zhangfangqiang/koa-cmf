@@ -56,7 +56,7 @@
    * 表单弹出表单
    */
   function zfPopupForm(pageUrl, postUrl, submitID, tableName, title, height = '330px', width = '500px', type = 'POST', maxmin = false) {
-    layer.open({
+    zfPopup = layer.open({
       title   : title,
       type    : 2,
       area    : [width, height],
@@ -64,9 +64,7 @@
       content : window.location.origin + pageUrl,
       btn     : ['确定', '取消'],
       yes     : function (index, layero) {
-        if (maxmin) {layer.full(index)
-          console.log()
-        }
+
         var iframeWindow = window['layui-layer-iframe' + index];                    //或如iframe
         var submit       = layero.find('iframe').contents().find('#' + submitID);
 
@@ -103,6 +101,8 @@
         submit.trigger('click');
       }
     });
+
+    if (maxmin) {layer.full(zfPopup)}
   }
 
   /**
@@ -344,27 +344,32 @@
       if (res.code == 0) {
         id       = $(this.item).data('id');                        //获取data-id
         moreUl   = $(this.item).prevAll('.zf-upload-files-ul')     //获取同级网上列表
-        liId     = new  Date().getTime()
+        liId     = new Date().getTime()
 
-        switch (id) {
-          case 'images':
-            element = $(`<li class="images-li" id="${id + '-' + liId}">
+        console.log(res)
+        if(moreUl) {
+          switch (id) {
+            case 'images':
+              element = $(`<li class="images-li" id="${id + '-' + liId}">
                         <input type="hidden" name="${id}_urls[]"  value="${res.data.filePath}">
                         <input type="hidden" name="${id}_names[]" value="${res.data.fileName}">
                         <img src="${res.data.fileUrl}">
                         <a href="javascript:(function(){$('#${id + '-' + liId}').remove();})();"><i class="layui-icon layui-icon-close"></i></a>
                       </li>`)
-            break
-          default:
-            element = $(`<li class="default-li" id="${id + '-' + liId}">
+              break
+            default:
+              element = $(`<li class="default-li" id="${id + '-' + liId}">
                         <input type="hidden" name="${id}_urls[]"  value="${res.data.filePath}">
                         <input class="layui-input layui-unselect fl" disabled name="${id}_names[]" value="${res.data.fileName}">
                         <a     class="fl" href="javascript:(function(){$('#${id + '-' + liId}').remove();})();"><i class="layui-icon layui-icon-close"></i></a>
                       </li>`)
-            break
+              break
+          }
+          moreUl.append(element)
         }
 
-        moreUl.append(element)
+        table.reload('slide-item-table');
+
       }else{
         layer.msg(res.msg, {time: 5000, icon: 2})
       }

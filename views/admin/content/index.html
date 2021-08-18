@@ -73,6 +73,7 @@
       <script type="text/html" id="content-tool">
         <button class="layui-btn  layui-btn-sm" lay-event="edit">编辑</button>
         <button class="layui-btn  layui-btn-sm" lay-event="destory">删除</button>
+        <button class="layui-btn  layui-btn-sm" lay-event="destory">设置suk</button>
       </script>
       <!--对这条数据进行操作的操作栏结束-->
     </div>
@@ -107,19 +108,21 @@
     cols: [[
       {field: "id",          title: "id" ,                     width: 70},
       {field: "title",       title: "标题",                     minWidth: 150},
-      {                      title: "分类",                     width: 80,   templet: function(d) {let str = '';d.categories.forEach((item) => {str += `<span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">${item.name}</span>`});return str;}},
-      {                      title: "作者",                     width: 80,      templet: '<div>{{!d.user.nick_name}}</div>' },
-      {                      title: "点击量|评论量|点赞量|评论量",  width: 220,   templet: '<div><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.hits_count}}</span><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.comment_count}}</span><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.like_count}}</span><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.favorites_count}}</span></div>'},
+      {                      title: "分类",                     width: 80,     templet: function(d) {let str = '';d.categories.forEach((item) => {str += `<span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">${item.name}</span>`});return str;}},
+      {                      title: "作者",                     width: 80,     templet: '<div>{{!d.user.nick_name}}</div>' },
+      {                      title: "点击量|评论量|点赞量|评论量",  width: 220,    templet: '<div><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.hits_count}}</span><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.comment_count}}</span><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.like_count}}</span><span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green">{{!d.favorites_count}}</span></div>'},
       {                      title: "关键字|来源|摘要|缩略图",     width: 200,    templet: function(d){let str = '';[d.keywords, d.source, d.excerpt, d.thumbnail].forEach((itme) => {if(itme){str += `<span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green"><i class="layui-icon layui-icon-ok"></i></span>`}else{str += `<span class="layui-btn layui-btn-xs "><i class="layui-icon layui-icon-close"></i></span>`}});return str;} , align: "center"},
       {                      title: "发布|置顶|重点|评论",        width: 200,    templet: function(d){var json = {1: '<span class="layui-btn layui-btn-xs layui-btn-primary layui-border-red"><i class="layui-icon layui-icon-close"></i></span>', 2: '<span class="layui-btn layui-btn-xs layui-btn-primary layui-border-green"><i class="layui-icon layui-icon-ok "></i></span>',};return `${json[d.status]} ${json[d.is_top]} ${json[d.is_recommended]} ${json[d.comment_status]}`} , align: "center"},
       {field: "created_at",  title: "创建时间",                  width: 180  },
-      {                      title: "操作",                     width: 150   , align: "center", fixed: "right", toolbar: "#content-tool"}
+      {                      title: "操作",                     width: 200,    templet:function(d){var str  = `<button class="layui-btn  layui-btn-sm" lay-event="edit">编辑</button><button class="layui-btn  layui-btn-sm" lay-event="destory">删除</button>`;if (d.type == 2) {str += '<button class="layui-btn  layui-btn-sm" lay-event="sku">设置sku</button>';}return`<div>${str}</div>`;}}
     ]],
     page: !0,
     limit: 20,
     limits: [20, 50, 100],
     text: "对不起，加载出现异常！",
   });
+
+
 
   /**
    * 监听表格操作工具栏
@@ -140,10 +143,27 @@
         'content-update-submit',
         'content-table',
         '内容编辑',
-        '100%',
-        '100%',
+        '800px',
+        '700px',
         'PUT',
         true
+      )
+    }
+
+    /**
+     * 设置sku
+     */
+    if (layEvent === 'sku') { //编辑
+      zfPopupForm(
+        '/admin/content/'+dataId+'/edit_sku',
+        '',
+        'content-sku-update-submit',
+        'content-sku-table',
+        '设置sku',
+        '500px',
+        '700px',
+        'PUT',
+        false
       )
     }
 
@@ -173,8 +193,8 @@
         'content-store-submit',
         'content-table',
         '内容创建',
-        '100%',
-        '100%',
+        '800px',
+        '700px',
         'POST',
         true
       )

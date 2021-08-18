@@ -2,8 +2,9 @@ module.exports = () => {
   const UserModel             = require('./user-model')
   const ContentModel          = require('./content-model')
   const CategoryModel         = require('./category-model')
-  const CategoryContentModel  = require('./category-content-model')
+  const ContentSkuModel       = require('./content-sku-model')
   const ContentAttrKeyModel   = require('./content-attr-key-model')
+  const CategoryContentModel  = require('./category-content-model')
   const ContentAttrValueModel = require('./content-attr-value-model')
 
   /*多对多*/
@@ -16,8 +17,14 @@ module.exports = () => {
     constraints: false
   })
 
+  /*一对多 反*/
   ContentModel.belongsTo(UserModel,{foreignKey: 'user_id', targetKey: 'id'})
 
+  /*一对多 正*/
+  ContentModel.hasMany(ContentAttrKeyModel, {foreignKey: 'content_id', targetKey: 'id'})
+
+  /*一对多 正*/
+  ContentModel.hasMany(ContentSkuModel, {foreignKey: 'content_id', targetKey: 'id'})
 
   /*多对多*/
   CategoryModel.belongsToMany(ContentModel, {
@@ -29,9 +36,9 @@ module.exports = () => {
     constraints: false
   })
 
-  /*一对多关联子集*/
+  /*一对多 正*/
   CategoryModel.hasMany(CategoryModel, {foreignKey: 'parent_id', targetKey: 'id'});
 
-  /*一对多一个键 下多个 值*/
+  /*一对多 正*/
   ContentAttrKeyModel.hasMany(ContentAttrValueModel, {foreignKey: 'attr_key_id', targetKey: 'id'});
 }

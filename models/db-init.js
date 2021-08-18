@@ -9,7 +9,7 @@ module.exports = () => {
   }, files);
 
   /*排序有的表不先注册关联不上*/
-  let order = ['user', 'category', 'content'];
+  let order = ['user', 'category', 'content', 'slide'];
 
   jsFiles.sort((a,b)=>{
     return order.indexOf(path.basename(a)) - order.indexOf(path.basename(b));
