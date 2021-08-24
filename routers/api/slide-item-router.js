@@ -6,7 +6,7 @@ const apiMiddleware  = require('./middleware');apiMiddleware(router)
 const SlideItemModel = require('../../models/slide-item-model')        //用户模型
 
 /**
- * 返回数据列表 正在使用
+ * 返回数据列表
  */
 router.get('/index', async (ctx, next) => {
   var {count, rows} = await SlideItemModel.findAndCountAll({...common.getSqlReady(ctx), order: [['list_order', 'ASC']]})
@@ -14,7 +14,7 @@ router.get('/index', async (ctx, next) => {
 })
 
 /**
- * 创建分类的方法
+ * 创建数据
  */
 router.post('/create', async (ctx, next) => {
   var   file       = {}
@@ -46,7 +46,7 @@ router.get('/:id', async (ctx, next) => {
 })
 
 /**
- * 更新数据的方法
+ * 更新数据
  */
 router.put('/:id', async (ctx, next) => {
   let {id}          = ctx.params
@@ -57,7 +57,7 @@ router.put('/:id', async (ctx, next) => {
 })
 
 /**
- * 删除数据的方法
+ * 删除数据
  */
 router.delete('/destroy', async (ctx, next) => {
   let config = common.bodySqlReady(ctx)

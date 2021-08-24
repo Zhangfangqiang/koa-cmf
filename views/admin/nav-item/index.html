@@ -1,0 +1,140 @@
+{{extend 'admin/layout/index.html'}}
+
+<!--后置css样式开始-->
+{{block 'after-css'}}
+<style>
+    .layui-table-cell {
+        height: auto;
+    }
+    .layui-table-cell img{
+        display: block;
+        margin: 0 auto;
+    }
+</style>
+{{/block}}
+<!--后置css样式结束-->
+
+<!--中间内容开始-->
+{{block 'content'}}
+<div class="layui-fluid">
+  <div class="layui-card">
+    <!--数据展示开始-->
+    <div class="layui-card-body">
+      <!--表格数据内容开始-->
+      <table id="nav-item-table" lay-filter="nav-item-table"></table>
+      <!--表格数据内容结束-->
+
+      <!--数据表格头部工具栏开始-->
+      <script type="text/html" id="nav-item-toolbar">
+        <button class="layui-btn  layui-btn-sm" lay-event="create"><i class="layui-icon layui-icon-destory"></i>添加</button>
+      </script>
+      <!--数据表格头部工具栏结束-->
+
+      <!--对这条数据进行操作的操作栏开始-->
+      <script type="text/html" id="nav-item-tool">
+        <button class="layui-btn  layui-btn-sm" lay-event="destory">删除</button>
+        <button class="layui-btn  layui-btn-sm" lay-event="imgUp">图片</button>
+      </script>
+      <!--对这条数据进行操作的操作栏结束-->
+    </div>
+    <!--数据展示结束-->
+  </div>
+</div>
+{{/block}}
+<!--中间内容结束-->
+
+<!--之后JavaScript开始-->
+{{block 'after-js'}}
+<script>
+  var upClick = 1
+  /**
+   * 准备表单
+   */
+  treeTable.render({
+    elem         : "#nav-item-table",
+    url          : "/api/nav-item/index?tree=1",
+    toolbar      : '#nav-item-toolbar',
+    cellMinWidth :80,
+    where   : {'where': {nav_id:'{"in":"{{id}}"}'}},
+    tree    : {
+      iconIndex: 2,
+    },
+    cols: [[
+      {field: "id",         title: "id" ,       width: 80},
+      {field: "list_order", title: "id" ,       width: 100 ,   edit:'text'},
+      {field: "name",       title: "导航item名称",width: 250,    edit:'text'},
+      {field: "content",    title: "备注",       minWidth: 150, edit:'text'},
+      {field: "status",     title: "是否显示",    width: 100,    templet: function (d) {if (d.status == 1) {return `<input type="checkbox" data-id="${d.id}" name="status" lay-filter="tableSwitch" lay-skin="switch" lay-text="开|关" value="2">`} else {return `<input type="checkbox" data-id="${d.id}" name="status" lay-filter="tableSwitch" lay-skin="switch" lay-text="开|关" value="1" checked>`}}},
+      {                     title: "操作",       width: 250,    align: "center", fixed: "right", toolbar: "#nav-item-tool"}
+    ]],
+    text: "对不起，加载出现异常！",
+  });
+
+  /**
+   * 监听表格操作工具栏
+   */
+  treeTable.on('tool(nav-item-table)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+    var data     = obj.data;                    //获得当前行数据
+    var layEvent = obj.event;                   //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+    var dataId   = data.id;                     //id
+
+    /**
+     * 删除方法开始
+     */
+    if (layEvent === 'destory') {
+      zfDestroy('/api/nav-item/destroy', {where: {id: {'in': dataId}}}, obj)
+    }
+
+    /**
+     * 图片更改
+     */
+    if(layEvent === 'imgUp'){
+      console.log(111)
+    }
+  })
+
+  /**
+   * 监听表格头部工具栏
+   */
+  treeTable.on('toolbar(nav-item-table)',function(obj){
+    var data     = obj.data;                  //获得当前行数据
+    var layEvent = obj.event;                 //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+    /**
+     * 添加数据的方法
+     */
+    if(layEvent === 'create'){
+      zfPopupForm(
+        '/admin/nav-item/create?nav_id={{id}}',
+        '/api/nav-item/create?nav_id={{id}}',
+        'nav-item-store-submit',
+        'nav-item-table',
+        '导航菜单创建',
+        '450px'
+      )
+    }
+  })
+
+  /**
+   * edit编辑事件监听
+   */
+  treeTable.on('edit(nav-item-table)', function(obj){
+    var value = obj.value,  //得到修改后的值
+        data  = obj.data,   //得到所在行所有键值
+        field = obj.field;  //得到字段
+
+    ajaxSlideItem(field, value, `/api/nav-item/${data.id}`,'nav-item-table')
+  });
+
+  /**
+   * 点击打开方式
+   */
+  form.on('switch(tableSwitch)', function(data){
+    var id    = $(data.elem).data('id')
+    var name  = $(data.elem).attr('name')
+    var value = $(data.elem).val()
+
+    ajaxSlideItem(name, value, `/api/nav-item/${id}`,'nav-item-table')
+  });
+</script>
+{{/block}}
+<!--之后JavaScript结束-->

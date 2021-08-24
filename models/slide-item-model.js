@@ -48,7 +48,11 @@ var SlideItemModel = db.define('slide_item',
     },
     url: {
       type: DataTypes.STRING,
-      comment: '点击图片后打开的url'
+      comment: '图片链接'
+    },
+    jump_url: {
+      type: DataTypes.STRING,
+      comment: '跳转url'
     },
     target: {
       type: DataTypes.STRING,

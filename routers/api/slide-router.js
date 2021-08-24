@@ -6,7 +6,7 @@ const SlideModel     = require('../../models/slide-model')             //轮播�
 const SlideItemModel = require('../../models/slide-item-model')        //轮播图模型item
 
 /**
- * 返回数据列表 正在使用
+ * 返回数据列表
  */
 router.get('/index', async (ctx, next) => {
   var {count, rows} = await SlideModel.findAndCountAll(common.getSqlReady(ctx))
@@ -14,7 +14,7 @@ router.get('/index', async (ctx, next) => {
 })
 
 /**
- * 创建轮播图的方法
+ * 创建数据
  */
 router.post('/create', async (ctx, next) => {
   let {name, remark} = ctx.request.body
@@ -40,7 +40,7 @@ router.get('/:id', async (ctx, next) => {
 })
 
 /**
- * 更新数据的方法
+ * 更新数据
  */
 router.put('/:id', async (ctx, next) => {
   let {id}           = ctx.params
@@ -55,7 +55,7 @@ router.put('/:id', async (ctx, next) => {
 })
 
 /**
- * 删除数据的方法
+ * 删除数据
  */
 router.delete('/destroy', async (ctx, next) => {
   let config      = common.bodySqlReady(ctx)

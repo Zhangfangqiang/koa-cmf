@@ -12,7 +12,7 @@ const ContentAttrKeyModel   = require('../../models/content-attr-key-model')
 const ContentAttrValueModel = require('../../models/content-attr-value-model')
 
 /**
- * 返回数据列表 正在使用
+ * 返回数据列表
  */
 router.get('/index', async (ctx, next) => {
   let sql           = common.getSqlReady(ctx)
@@ -24,7 +24,7 @@ router.get('/index', async (ctx, next) => {
 })
 
 /**
- * 返回数据列表 正在使用
+ * 返回数据列表 sku
  */
 router.get('/sku/index', async (ctx, next) => {
   let id   = ctx.qs.id
@@ -47,7 +47,7 @@ router.get('/:id', async (ctx, next) => {
 })
 
 /**
- * 更新sku
+ * 更新数据 sku
  */
 router.put('/:id/sku', async (ctx, next) => {
   let {id}          = ctx.params
@@ -59,7 +59,7 @@ router.put('/:id/sku', async (ctx, next) => {
 })
 
 /**
- * 更新数据的方法
+ * 更新数据
  */
 router.put('/:id', async (ctx, next) => {
   let {id}  = ctx.params
@@ -101,7 +101,7 @@ router.put('/:id', async (ctx, next) => {
 })
 
 /**
- * 创建
+ * 创建数据
  */
 router.post('/create', async (ctx, next) => {
   let path  = 0
@@ -167,7 +167,7 @@ router.post('/create', async (ctx, next) => {
 })
 
 /**
- * 删除数据的方法
+ * 删除数据
  */
 router.delete('/destroy', async (ctx, next) => {
   let config = common.bodySqlReady(ctx)

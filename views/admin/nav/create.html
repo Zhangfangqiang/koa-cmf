@@ -1,0 +1,26 @@
+{{extend 'admin/layout/index.html'}}
+
+{{block 'content'}}
+<div class="layui-card zf-parent-body-white" style="margin-bottom: 0px;">
+  <div class="layui-card-body">
+    <form class="layui-form">
+      <div class="layui-form-item">
+        <label class="layui-form-label">名称：</label>
+        <div class="layui-input-block">
+          <input type="text" name="name" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">备注：</label>
+        <div class="layui-input-block">
+          <textarea rows="5" type="text" name="content" style="resize: none;" lay-verify="required" placeholder="" autocomplete="off" class="layui-textarea"></textarea>
+        </div>
+      </div>
+      <input type="button" hidden id="nav-store-submit" lay-filter="nav-store-submit" lay-submit value="确认">
+    </form>
+  </div>
+</div>
+{{/block}}
+
+{{block 'after-js'}}
+{{/block}}

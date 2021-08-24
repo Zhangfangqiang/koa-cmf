@@ -54,7 +54,6 @@ var UserModel = db.define('user',
     },
     password: {
       type: DataTypes.STRING(32),
-      allowNull: false,
       comment: '用户密码',
       set(value){
         this.setDataValue('password', common.createPassword(value))
@@ -80,6 +79,18 @@ var UserModel = db.define('user',
     city: {
       type: DataTypes.STRING(100),
       comment: '城市'
+    },
+    county:{
+      type: DataTypes.STRING(100),
+      comment: '区县'
+    },
+    language:{
+      type: DataTypes.STRING(100),
+      comment: '语言'
+    },
+    watermark:{
+      type: DataTypes.JSON,
+      comment: '微信小程序水印'
     },
     last_login_ip: {
       type: DataTypes.STRING(100),

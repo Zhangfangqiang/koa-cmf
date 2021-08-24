@@ -9,11 +9,4 @@ router.get('/index', async (ctx, next) => {
   await ctx.render('admin/index/index')
 })
 
-/**
- * 上传测试页面
- */
-router.get('/fileUpload', async (ctx, next) => {
-  await ctx.render('admin/index/fileUpload')
-})
-
 module.exports = router

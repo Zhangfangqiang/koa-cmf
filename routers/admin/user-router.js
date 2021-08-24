@@ -8,7 +8,7 @@ const adminMiddleware = require('./middleware');adminMiddleware(router)
 
 
 /**
- * 生成用户测试数据
+ * 生成测试数据
  */
 router.get('/createTestData', async (ctx, next) => {
 
@@ -45,21 +45,21 @@ router.get('/login', async (ctx, next) => {
 })
 
 /**
- * 用户数据列表页
+ * 数据列表页
  */
 router.get('/index', async (ctx, next) => {
   await ctx.render('admin/user/index')
 })
 
 /**
- * 创建用户页面
+ * 创建页面
  */
 router.get('/create', async (ctx, next) => {
   await ctx.render('admin/user/create')
 })
 
 /**
- * 编辑用户页面
+ * 编辑页面
  */
 router.get('/:id/edit', async (ctx, next) => {
   let {id} = ctx.params

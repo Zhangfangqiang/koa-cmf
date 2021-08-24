@@ -57,7 +57,7 @@
     elem    : '#slide-item-table',
     toolbar : '#slide-item-toolbar',
     limit   : 99999999999,
-    where   : {'where': {slide_id:{'in': {{id}}}}},
+    where   : {'where': {slide_id:'{"in":"{{id}}"}'}},
     cols: [[
       {field:'list_order',title:'排序',     width: 90,     edit:'text'},
       {                   title: "",       templet: '<div><img src="{{!d.path}}" alt=""></div>' , style: 'height:78px' ,  width: 150},
@@ -65,8 +65,8 @@
       {field:'url',       title:'点击链接',  minWidth: 150, edit:'text'},
       {field:'title',     title:'图片名称',  minWidth: 150, edit:'text'},
       {field:'content',   title:'图片描述',  minWidth:50,   edit:'text'},
-      {field:'target',    title:'打开方式',  width:100,     templet:function (d){if (d.target == 'self') {return `<input type="checkbox" data-id="${d.id}" name="status" lay-filter="switchTarget" lay-skin="switch" lay-text="self|blank" checked>`} else {return `<input type="checkbox" data-id="${d.id}" name="status" lay-filter="switchTarget" lay-skin="switch" lay-text="self|blank">`}}},
-      {field:'status',    title:'状态',     width:100,     templet:function (d){if (d.status == 2) {return `<input type="checkbox" data-id="${d.id}" name="status" lay-filter="switchStatus" lay-skin="switch" lay-text="开|关" checked>`} else {return `<input type="checkbox" data-id="${d.id}" name="status" lay-filter="switchStatus" lay-skin="switch" lay-text="开|关">`}}},
+      {field:'target',    title:'打开方式',  width:100,     templet:function (d){if (d.target == 'self') {return `<input type="checkbox" data-id="${d.id}" name="target" lay-filter="tableSwitch" lay-skin="switch" lay-text="self|blank" value="blank" checked>`} else {return `<input type="checkbox" data-id="${d.id}" name="target" lay-filter="tableSwitch" lay-skin="switch" lay-text="self|blank" value="self">`}}},
+      {field:'status',    title:'状态',     width:100,     templet:function (d){if (d.status == 2) {return `<input type="checkbox" data-id="${d.id}" name="status" lay-filter="tableSwitch" lay-skin="switch" lay-text="开|关" value="1" checked>`} else {return `<input type="checkbox" data-id="${d.id}" name="status" lay-filter="tableSwitch" lay-skin="switch" lay-text="开|关" value="2">`}}},
       {                   title:'操作',     width:100,     toolbar: "#slide-item-tool"}
     ]]
   });
@@ -76,10 +76,10 @@
    */
   table.on('edit(slide-item-table)', function(obj){
     var value = obj.value,  //得到修改后的值
-      data  = obj.data,   //得到所在行所有键值
-      field = obj.field;  //得到字段
+        data  = obj.data,   //得到所在行所有键值
+        field = obj.field;  //得到字段
 
-    ajaxSlideItem(field, value, data.id)
+    ajaxSlideItem(field, value, `/api/slide-item/${data.id}`, 'slide-item-table')
   });
 
   /**
@@ -99,44 +99,17 @@
   })
 
   /**
-   * 状态控制
+   * 表格开关管理
    */
-  form.on('switch(switchStatus)', function(data){
+  form.on('switch(tableSwitch)', function(data){
     var id    = $(data.elem).data('id')
-    if ($(data.elem).is(":checked")) {value = 2} else {value = 1}
+    var name  = $(data.elem).attr('name')
+    var value = $(data.elem).val()
 
-    ajaxSlideItem('status', value, id)
+    ajaxSlideItem(name, value, `/api/slide-item/${id}`, 'slide-item-table')
   });
 
-  /**
-   * 点击打开方式
-   */
-  form.on('switch(switchTarget)', function(data){
-    var id    = $(data.elem).data('id')
-    if ($(data.elem).is(":checked")) {value = "self"} else {value = "blank"}
 
-    ajaxSlideItem('target', value, id)
-  });
-
-  /**
-   * ajax 更改路径
-   * @param field
-   * @param value
-   * @param id
-   */
-  function ajaxSlideItem(field, value, id) {
-    $.ajax({
-      url     : `/api/slide-item/${id}`,
-      dataType: "json",
-      type    : 'PUT',
-      data    : {field: field, value: value},
-      async   : true, //异步
-      success : function (res) {
-        //执行重载
-        table.reload('slide-item-table');
-      }
-    });
-  }
 </script>
 {{/block}}
 <!--之后JavaScript结束-->

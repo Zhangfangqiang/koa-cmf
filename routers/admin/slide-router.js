@@ -1,4 +1,4 @@
-const Router          = require("@koa/router")                          //路由
+const Router          = require("@koa/router")                           //路由
 const router          = new Router({prefix: '/admin/slide'})             //实例化定义前戳
 const adminMiddleware = require('./middleware');adminMiddleware(router)
 
@@ -10,21 +10,21 @@ router.get('/login', async (ctx, next) => {
 })
 
 /**
- * 用户数据列表页
+ * 数据列表页
  */
 router.get('/index', async (ctx, next) => {
   await ctx.render('admin/slide/index')
 })
 
 /**
- * 创建用户页面
+ * 创建页面
  */
 router.get('/create', async (ctx, next) => {
   await ctx.render('admin/slide/create')
 })
 
 /**
- * 编辑用户页面
+ * 编辑页面
  */
 router.get('/:id/edit', async (ctx, next) => {
   let {id} = ctx.params

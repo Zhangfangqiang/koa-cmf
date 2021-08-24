@@ -4,7 +4,7 @@ const common    = require('../../lib/common')                     //常用
 const path      = require('path');
 
 /**
- * 返回数据列表
+ * 文件上传入口
  */
 router.post('/index', async (ctx, next) => {
   const savePath =  path.join(__dirname, '../../public/upload')
@@ -46,8 +46,6 @@ router.post('/wangEditor', async (ctx, next) => {
 router.post('/wangEditorVideo', async (ctx, next) => {
   let   data     = {}
   const savePath = path.join(__dirname, '../../public/upload')
-
-  console.log(ctx.request.files)
 
   for (item in ctx.request.files) {
     let {filePath} = common.mvFile(ctx.request.files[item], savePath, ctx)

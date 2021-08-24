@@ -8,12 +8,9 @@ const CategoryModel = require('../../models/category-model')          //用户�
  * 返回数据列表 正在使用
  */
 router.get('/index', async (ctx, next) => {
-
   var {count, rows} = await CategoryModel.findAndCountAll(common.getSqlReady(ctx))
 
-  console.log(ctx.qs)
-
-  if (!ctx.qs.where && ctx.qs.tree) {
+  if (ctx.qs.tree) {
     rows = common.getTree(rows)
   }
 
@@ -44,7 +41,7 @@ router.get('/index0', async (ctx, next) => {
 })
 
 /**
- * 创建分类的方法
+ * 创建数据
  */
 router.post('/create', async (ctx, next) => {
   let path  = 0
@@ -78,7 +75,7 @@ router.get('/:id', async (ctx, next) => {
 })
 
 /**
- * 更新数据的方法
+ * 更新数据
  */
 router.put('/:id', async (ctx, next) => {
   let path  = 0
@@ -117,6 +114,16 @@ router.put('/:id', async (ctx, next) => {
 })
 
 /**
+ * 删除数据
+ */
+router.delete('/destroy', async (ctx, next) => {
+  let config = common.bodySqlReady(ctx)
+  await UserModel.destroy(config).then((s)=>{
+    ctx.body = {code: 0, msg: '删除成功'}
+  })
+})
+
+/**
  * 递归更新后面子类的方法
  * @param data      是我自己的数据
  * @param id
@@ -137,15 +144,5 @@ async function recursionChangePath(data, id) {
     })
   }
 }
-
-/**
- * 删除数据的方法
- */
-router.delete('/destroy', async (ctx, next) => {
-  let config = common.bodySqlReady(ctx)
-  await UserModel.destroy(config).then((s)=>{
-    ctx.body = {code: 0, msg: '删除成功'}
-  })
-})
 
 module.exports = router

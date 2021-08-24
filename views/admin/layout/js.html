@@ -14,6 +14,7 @@
   var form      = layui.form;
   var router    = layui.router();
   var search    = router.search;
+  var qs        = parseSearch();
   var table     = layui.table;
   var laydate   = layui.laydate;
   var upload    = layui.upload;
@@ -471,6 +472,26 @@
       }
     })
     return newTree
+  }
+
+  /**
+   * ajax 更改路径
+   * @param field
+   * @param value
+   * @param id
+   */
+  function ajaxSlideItem(field, value, url, tableName) {
+    $.ajax({
+      url     : url,
+      dataType: "json",
+      type    : 'PUT',
+      data    : {field: field, value: value},
+      async   : true, //异步
+      success : function (res) {
+        //执行重载
+        table.reload(tableName);
+      }
+    });
   }
 
   /**

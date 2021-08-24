@@ -130,14 +130,14 @@ router.get('/createTestData', async (ctx, next) => {
 })
 
 /**
- * 用户数据列表页
+ * 数据列表页
  */
 router.get('/index', async (ctx, next) => {
   await ctx.render('admin/content/index')
 })
 
 /**
- * 创建用户页面
+ * 创建页面
  */
 router.get('/create', async (ctx, next) => {
   let {type} = ctx.qs
