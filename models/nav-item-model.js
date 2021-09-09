@@ -1,7 +1,9 @@
-const DataTypes = require( 'sequelize' )
-const db        = require("./db-mysql")
-const options   = require('../config/model')
-const NavModel  = require('./nav-model')
+const db            = require("./db-mysql")
+const app           = require('../config/app')
+const options       = require('../config/model')
+const NavModel      = require('./nav-model')
+const DataTypes     = require( 'sequelize' )
+const CategoryModel = require('./category-model')
 
 module.exports = db.define('nav_item', {
   id: {
@@ -59,13 +61,25 @@ module.exports = db.define('nav_item', {
   img:{
     type: DataTypes.STRING(250),
     comment: 'icon',
+    get() {
+      return app.host + this.getDataValue('img')
+    }
   },
   href:{
     type: DataTypes.STRING(250),
     comment: '页面跳转',
   },
-  wx_href:{
-    type: DataTypes.STRING(250),
-    comment: '微信跳转',
+  category_id:{
+    type: DataTypes.BIGINT.UNSIGNED,
+    comment: '轮播图分组id',
+    references: {                           //关联
+      model: CategoryModel,
+      key: 'id',
+      deferrable: DataTypes.Deferrable.INITIALLY_IMMEDIATE    //设置约束类型
+    }
   },
+  option: {
+    type: DataTypes.JSON,
+    comment: '参数',
+  }
 },options)

@@ -82,19 +82,8 @@ router.post('/login', async (ctx, next) => {
     ctx.session.sessionKeyRecordId = sessionKeyRecord.id
 
     //签数据
-    let authorizationToken = jsonwebtoken.sign({
-        user_id    : user.id,
-        nick_name  : decryptedUserInfo.nickName,
-        avatar_url : decryptedUserInfo.avatarUrl,
-        open_id    : decryptedUserInfo.openId,
-        session_key: sessionKey
-      },
-      appConfig.jwtSecret,
-      {expiresIn: '3d'}//修改为3天，这是sessionKey的有效时间
-    )
-
-    ctx.status = 200
-    ctx.body   = {code: 200, msg: 'ok', data: {...user.toJSON(), authorizationToken}}
+    let token   = jsonwebtoken.sign(user.toJSON(), appConfig.jwtSecret, {expiresIn: '3d'})
+    ctx.body    = {code: 200, msg: 'ok', data: {...user.toJSON(), token}}
 
   }else{/*这里是普通后台登陆*/
     let user = await UserModel.findOne({where: {

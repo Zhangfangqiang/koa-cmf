@@ -2,6 +2,7 @@ const db        = require("./db-mysql")
 const options   = require('../config/model')
 const SlideModel= require('./slide-model')
 const DataTypes = require('sequelize')
+const app       = require('../config/app')
 
 
 /**
@@ -44,7 +45,15 @@ var SlideItemModel = db.define('slide_item',
     },
     path: {
       type: DataTypes.STRING,
-      comment: '图片路径'
+      comment: '图片路径',
+      get() {
+        let path = this.getDataValue('path')
+        if (path.indexOf("http") == -1) {
+          return app.host + this.getDataValue('path')
+        }else{
+          return path
+        }
+      }
     },
     url: {
       type: DataTypes.STRING,

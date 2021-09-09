@@ -6,9 +6,18 @@
     .layui-table-cell {
         height: auto;
     }
-    .layui-table-cell img{
+
+    .layui-table-cell img {
         display: block;
         margin: 0 auto;
+    }
+
+    .tab-btn {
+        display: block;
+        border: none;
+        background: inherit;
+        height: 70px;
+        width: 100%;
     }
 </style>
 {{/block}}
@@ -17,7 +26,7 @@
 <!--中间内容开始-->
 {{block 'content'}}
 <div class="layui-fluid">
-  <div class="layui-card">
+  <div class="layui-card" style="min-height: 1926.580px;">
     <!--数据展示开始-->
     <div class="layui-card-body">
       <!--表格数据内容开始-->
@@ -33,7 +42,6 @@
       <!--对这条数据进行操作的操作栏开始-->
       <script type="text/html" id="nav-item-tool">
         <button class="layui-btn  layui-btn-sm" lay-event="destory">删除</button>
-        <button class="layui-btn  layui-btn-sm" lay-event="imgUp">图片</button>
       </script>
       <!--对这条数据进行操作的操作栏结束-->
     </div>
@@ -56,16 +64,16 @@
     toolbar      : '#nav-item-toolbar',
     cellMinWidth :80,
     where   : {'where': {nav_id:'{"in":"{{id}}"}'}},
-    tree    : {
-      iconIndex: 2,
-    },
+    tree    : {iconIndex: 2},
     cols: [[
       {field: "id",         title: "id" ,       width: 80},
-      {field: "list_order", title: "id" ,       width: 100 ,   edit:'text'},
+      {field: "list_order", title: "排序",       width: 100 ,   edit:'text'},
       {field: "name",       title: "导航item名称",width: 250,    edit:'text'},
+      {field: "img",        title: "图片",       width: 150,    templet: function (d) {return `<div lay-submit lay-filter='edit' data-id="${d.id}" style="min-height: 50px;"><img  style="display: block; margin: 0 auto;" src="${d.img}" alt=""></div>`}  , style: 'height:78px'},
+      {field: "option",     title: "参数",       width: 150,    templet: function (d){ return `<button class='tab-btn' data-id="${d.id}" lay-submit lay-filter='option-set'>${JSON.stringify(d.option)}</button>` }},
       {field: "content",    title: "备注",       minWidth: 150, edit:'text'},
       {field: "status",     title: "是否显示",    width: 100,    templet: function (d) {if (d.status == 1) {return `<input type="checkbox" data-id="${d.id}" name="status" lay-filter="tableSwitch" lay-skin="switch" lay-text="开|关" value="2">`} else {return `<input type="checkbox" data-id="${d.id}" name="status" lay-filter="tableSwitch" lay-skin="switch" lay-text="开|关" value="1" checked>`}}},
-      {                     title: "操作",       width: 250,    align: "center", fixed: "right", toolbar: "#nav-item-tool"}
+      {                     title: "操作",       width: 100,    align: "center", fixed: "right", toolbar: "#nav-item-tool"}
     ]],
     text: "对不起，加载出现异常！",
   });
@@ -78,18 +86,12 @@
     var layEvent = obj.event;                   //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
     var dataId   = data.id;                     //id
 
+
     /**
      * 删除方法开始
      */
     if (layEvent === 'destory') {
       zfDestroy('/api/nav-item/destroy', {where: {id: {'in': dataId}}}, obj)
-    }
-
-    /**
-     * 图片更改
-     */
-    if(layEvent === 'imgUp'){
-      console.log(111)
     }
   })
 
@@ -109,7 +111,7 @@
         'nav-item-store-submit',
         'nav-item-table',
         '导航菜单创建',
-        '450px'
+        '400px'
       )
     }
   })
@@ -135,6 +137,40 @@
 
     ajaxSlideItem(name, value, `/api/nav-item/${id}`,'nav-item-table')
   });
+
+  /**
+   * 链接参数设置
+   */
+  form.on('submit(option-set)', function(data){
+    var id    = $(data.elem).data('id')
+    zfPopupForm(
+      `/admin/nav-item/${id}/option-set`,
+      `/api/nav-item/${id}`,
+      'nav-item-update-submit',
+      'nav-item-table',
+      '参数设置',
+      '300px',
+      '500px',
+      'PUT'
+    )
+  });
+
+  /**
+   * 图片更改开始
+   */
+  form.on('submit(edit)', function(data){
+    var id    = $(data.elem).data('id')
+    zfPopupForm(
+      `/admin/nav-item/${id}/edit`,
+      `/api/nav-item/${id}`,
+      'nav-item-update-submit',
+      'nav-item-table',
+      '图片更改',
+      '300px',
+      '200px',
+      'PUT'
+    )
+  })
 </script>
 {{/block}}
 <!--之后JavaScript结束-->

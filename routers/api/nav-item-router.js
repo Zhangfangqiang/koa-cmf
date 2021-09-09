@@ -1,15 +1,40 @@
-const path           = require('path');
-const Router         = require("@koa/router")                          //路由
-const router         = new Router({prefix: '/api/nav-item'})           //实例化定义前戳
-const common         = require('../../lib/common')                     //常用
-const apiMiddleware  = require('./middleware');apiMiddleware(router)
-const NavItemModel   = require('../../models/nav-item-model')          //用户模型
+const path                 = require('path');
+const Router               = require("@koa/router")                          //路由
+const router               = new Router({prefix: '/api/nav-item'})           //实例化定义前戳
+const common               = require('../../lib/common')                     //常用
+const apiMiddleware        = require('./middleware');apiMiddleware(router)
+const NavItemModel         = require('../../models/nav-item-model')          //用户模型
+const ContentModel         = require('../../models/content-model')
+const CategoryModel        = require('../../models/category-model')
+const CategoryContentModel = require('../../models/category-content-model')
+
 
 /**
  * 返回数据列表
  */
 router.get('/index', async (ctx, next) => {
-  var {count, rows} = await NavItemModel.findAndCountAll({...common.getSqlReady(ctx), order: [['list_order', 'ASC']]})
+
+  var include = []
+
+  if (ctx.qs.category) {
+    include.push({model: CategoryModel})
+  }
+
+  if (ctx.qs.content) {
+    include.push({
+      model: CategoryContentModel,
+      limit: 10,
+      include: [
+        ContentModel
+      ]
+    })
+  }
+
+  var {count, rows} = await NavItemModel.findAndCountAll({
+    ...common.getSqlReady(ctx),
+    order: [['list_order', 'ASC']],
+    include
+  })
 
   if (ctx.qs.tree) {
     rows = common.getTree(rows)
@@ -56,10 +81,19 @@ router.get('/:id', async (ctx, next) => {
  * 更新数据
  */
 router.put('/:id', async (ctx, next) => {
-  let {id}          = ctx.params
-  let {value,field} = ctx.request.body
+  let {id}                = ctx.params
+  let {value, field, img, option} = ctx.request.body
 
-  await NavItemModel.update(JSON.parse(`{"${field}":"${value}"}`),{where: {id: id}})
+  if (value) {if (field) {
+    await NavItemModel.update(JSON.parse(`{"${field}":"${value}"}`), {where: {id: id}})
+  }}
+  if (img) {
+    await NavItemModel.update({img}, {where: {id: id}})
+  }
+  if (option) {
+    await NavItemModel.update({option}, {where: {id: id}})
+  }
+
   ctx.body = {code: 0, msg: '成功'}
 })
 

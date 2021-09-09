@@ -1,4 +1,5 @@
 const db        = require("./db-mysql")
+const app       = require('../config/app')
 const options   = require('../config/model')
 const DataTypes = require('sequelize')
 const UserModel = require('./user-model')
@@ -114,7 +115,15 @@ var ContentModel = db.define('content',
     },
     thumbnail: {
       type: DataTypes.STRING,
-      comment: '缩略图'
+      comment: '缩略图',
+      get() {
+        let thumbnail = this.getDataValue('thumbnail')
+        if (thumbnail.indexOf("http") == -1) {
+          return app.host + this.getDataValue('thumbnail')
+        }else{
+          return thumbnail
+        }
+      }
     },
     content: {
       type: DataTypes.TEXT,
@@ -132,7 +141,18 @@ var ContentModel = db.define('content',
     },
     more: {
       type: DataTypes.JSON,
-      comment: '扩展属性'
+      comment: '扩展属性',
+      get() {
+        var more = this.getDataValue('more')
+        for (let item in more) {
+          for (let i in more[item]) {
+            if(more[item][i].url.indexOf("http") == -1){
+              more[item][i].url = app.host + more[item][i].url
+            }
+          }
+        }
+        return more
+      }
     },
     published_at: {
       type: DataTypes.DATE,

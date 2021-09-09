@@ -1,0 +1,32 @@
+{{extend 'admin/layout/index.html'}}
+
+{{block 'content'}}
+<div class="layui-card zf-parent-body-white" style="margin-bottom: 0px;">
+  <div class="layui-card-body">
+    <form class="layui-form" lay-filter="nav-item-update-form">
+
+      <div class="layui-form-item">
+        <img class="form-file-img" id="img_img" style="width: 100px;height: auto;display: block; margin: 0 auto;">
+        <button data-id="img" type="button" class="zf-upload-img layui-btn layui-btn-xs" style="display: block; margin: 0 auto;margin-top:5px">选择图片</button>
+        <input type="text" id="img" name="img" value="" hidden>
+      </div>
+      
+      <input type="button" hidden id="nav-item-update-submit" lay-filter="nav-item-update-submit" lay-submit value="确认">
+    </form>
+  </div>
+</div>
+{{/block}}
+
+{{block 'after-js'}}
+<script>
+  $.ajax({
+    url     : '{{updateUrl}}',
+    type    : 'GET',
+    dataType: 'json',
+    success : function (res) {
+      form.val("nav-item-update-form", res.data);
+      $('#img_img').attr('src',res.data.img)
+    }
+  })
+</script>
+{{/block}}

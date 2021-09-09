@@ -1,0 +1,38 @@
+{{extend 'admin/layout/index.html'}}
+
+{{block 'after-css'}}
+<style>
+    #editorCode {
+        width: 100%;
+        height: 100vh;
+    }
+
+    .layui-card-body {
+        padding: 0px;
+    }
+</style>
+{{/block}}
+
+{{block 'content'}}
+<div class="layui-card zf-parent-body-white" style="margin-bottom: 0px;">
+  <div class="layui-card-body">
+    <form class="layui-form" lay-filter="nav-item-update-form">
+      <div id="editorCode"></div>
+      <input type="button" hidden id="nav-item-update-submit" lay-filter="nav-item-update-submit" lay-submit value="确认">
+    </form>
+  </div>
+</div>
+{{/block}}
+
+{{block 'after-js'}}
+<script>
+  $.ajax({
+    url     : '{{updateUrl}}',
+    type    : 'GET',
+    dataType: 'json',
+    success : function (res) {
+      editorCode.setValue(JSON.stringify( res.data.option))
+    }
+  })
+</script>
+{{/block}}

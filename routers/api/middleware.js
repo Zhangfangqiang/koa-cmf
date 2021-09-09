@@ -16,20 +16,22 @@ module.exports = (router) => {
   /**
    * 获取所有请求api路由中的 authorization 并解析为user
    */
-  //router.use(async (ctx, next) => {
-  //  let authorization = ctx.request.header.authorization;                                         //authorization
-  //  if (authorization) {
-  //    token       = authorization.split(' ')[1]                                          //删除第一个空格
-  //    ctx['user'] = await util.promisify(jsonwebtoken.verify)(token, appConfig.jwtSecret);        //根据token和加密字符串获得数据如果签名不对，这里会报错，走到catch分支
-  //  }
-  //  await next()    //所有next都要加await，重要！
-  //})
-
   router.use(async (ctx, next) => {
-    ctx['user'] = await UserModel.findByPk(1)
-    ctx['user'] = ctx['user'].toJSON()
-    await next()
+    let authorization = ctx.request.header.authorization;                                         //authorization
+    if (authorization) {
+      token       = authorization.split(' ')[1]                                          //删除第一个空格
+      try{
+        ctx['user'] = await util.promisify(jsonwebtoken.verify)(token, appConfig.jwtSecret);      //根据token和加密字符串获得数据如果签名不对，这里会报错，走到catch分支
+      }catch (e){
+        console.log('解析错误 | 已过期')
+      }
+    }else{
+      ctx['user'] =  await UserModel.findByPk(209)
+      ctx['user'] = ctx['user'].toJSON()
+    }
+    await next()    //所有next都要加await，重要！
   })
+
 }
 
 
