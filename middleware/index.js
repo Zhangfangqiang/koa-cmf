@@ -10,7 +10,7 @@ const qs              = require('qs')
 module.exports = app  => {
   app.keys = ['some secret hurr']                           //设置签名的 Cookie 密钥
   app.use(logger())                                         //路由日志打印
-  app.use(koaBody({                                 //post提交的数据
+  app.use(koaBody({                                         //post提交的数据
     multipart : true,
     strict    : false,                                      //默认true，设为false,delete、get、patch
   }));
@@ -26,6 +26,6 @@ module.exports = app  => {
       console.log('ctx.querystring 为空')
     }
     await next();
-  });
+  });                      //qs 配置
   render(app, viewConfig)                                   //返回视图方法配置
 }

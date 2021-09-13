@@ -8,4 +8,4 @@ middleware(app)
 routers(app)
 dbInit()
 
-app.listen(3000)      //设置端口
+app.listen(9000)      //设置端口

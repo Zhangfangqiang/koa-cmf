@@ -29,14 +29,14 @@
       <div class="layui-form-item">
         <label class="layui-form-label">icon：</label>
         <div class="layui-input-block">
-          <input type="text" name="icon" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+          <input type="text" name="icon"  placeholder="" autocomplete="off" class="layui-input">
         </div>
       </div>
 
       <div class="layui-form-item">
         <label class="layui-form-label">href：</label>
         <div class="layui-input-block">
-          <input type="text" name="href" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+          <input type="text" name="href"  placeholder="" autocomplete="off" class="layui-input">
         </div>
       </div>
 
@@ -48,6 +48,6 @@
 
 {{block 'after-js'}}
 <script>
- treeSelect(`http://localhost:3000/api/nav-item/index?tree=1&where%5Bnav_id%5D=%7B%22in%22%3A%22${qs.nav_id}%22%7D`, '.category-tree-select', 'children')
+ treeSelect(`/api/nav-item/index?tree=1&where%5Bnav_id%5D=%7B%22in%22%3A%22${qs.nav_id}%22%7D`, '.category-tree-select', 'children')
 </script>
 {{/block}}

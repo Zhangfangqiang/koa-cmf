@@ -4,9 +4,9 @@ const dbAssociations = require('./db-associations')
 const db = new Sequelize({
   host    : '127.0.0.1',            //主机名
   port    : 3306,                   //端口号，MySQL默认3306
-  database: 'koa-cmf',              //数据库名
-  username: 'root',                 //用户名
-  password: '',                     //密码
+  database: 'koacmf_zfajax_co',     //数据库名
+  username: 'koacmf_zfajax_co',     //用户名
+  password: 'SCe2ex6LdZZkx4wr',     //密码
   timezone: "+08:00",
   define: {
     charset : 'utf8mb4',
@@ -23,7 +23,7 @@ const db = new Sequelize({
 
 db.authenticate().then(() => {
   console.log('数据库连接成功')
-  dbAssociations()
+  dbAssociations()          //第一次数据库要注释这行
 }).catch(err => {
   console.error('数据库连接异常', err)
 })

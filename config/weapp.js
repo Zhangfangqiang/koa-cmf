@@ -1,3 +1,7 @@
+/**
+ * 小程序参数配置
+ * @type {{miniProgram: {appId: string, appSecret: string}}}
+ */
 module.exports = {
   miniProgram: {
     appId     : "wxaa39711373f5fe16",
